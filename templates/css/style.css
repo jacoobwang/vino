@@ -1,0 +1,36 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+body {
+	background: url(../img/hero.jpg);
+    background-size: cover;
+}
+.container {
+	position: absolute;
+	width: 600px;
+	height: 300px;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	margin: auto;
+	text-align: center;
+	border: 1px solid #ccc;
+	-webkit-box-shadow:0 0 10px #0CC;  
+    -moz-box-shadow:0 0 10px #0CC;  
+    box-shadow:0 0 10px #0CC; 
+}
+.container .title {
+	font-size: 40px;
+	font-weight: 600;
+	color: #ccc;
+	margin-bottom: 15px;
+}
+.container p {
+	color: #ccc;
+	margin-bottom: 15px;
+}
+.container p span{
+	color: #999;
+}

@@ -1,0 +1,11 @@
+{
+  "autoload": {
+    "psr-4": {
+      "Ecc\\Topic\\": "src/",
+	  "Mphp\\": "mphp/"		  
+    }
+  },
+ "require": {
+     "smarty/smarty": "~3.1"
+ }		  
+}
