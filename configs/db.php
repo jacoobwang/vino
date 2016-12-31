@@ -9,7 +9,7 @@
 
 return array(
     'm' => array(
-		'dsn' => 'mysql:host=localhost;port=3306;dbname=topic',
+		'dsn' => 'mysql:host=127.0.0.1;port=3306;dbname=ecc_mphp',
         'username' => 'root',
         'password' => '123456',
     ),

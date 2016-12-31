@@ -119,7 +119,7 @@ class RouteParse {
 
     public function match($url) {
         $is_match = preg_match_all(
-            sprintf('`%s$`i', $this->_rule_pattern),
+            sprintf('`^%s$`i', $this->_rule_pattern),
             $url,
             $matches
         );

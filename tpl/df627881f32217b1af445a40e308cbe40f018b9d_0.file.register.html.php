@@ -1,18 +1,18 @@
 <?php
-/* Smarty version 3.1.30, created on 2016-12-30 11:13:34
-  from "D:\wamp\www\Mphp\templates\register.html" */
+/* Smarty version 3.1.31, created on 2016-12-30 21:01:33
+  from "/Users/wangyong/www/mphp/templates/register.html" */
 
 /* @var Smarty_Internal_Template $_smarty_tpl */
 if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
-  'version' => '3.1.30',
-  'unifunc' => 'content_5865d0de0f33a1_59768127',
+  'version' => '3.1.31',
+  'unifunc' => 'content_58665aadef52c8_51625418',
   'has_nocache_code' => false,
   'file_dependency' => 
   array (
-    'dceb417ea78268fd025ffb9ce65424d6579aa723' => 
+    'df627881f32217b1af445a40e308cbe40f018b9d' => 
     array (
-      0 => 'D:\\wamp\\www\\Mphp\\templates\\register.html',
-      1 => 1483067404,
+      0 => '/Users/wangyong/www/mphp/templates/register.html',
+      1 => 1483102866,
       2 => 'file',
     ),
   ),
@@ -20,7 +20,7 @@ if ($_smarty_tpl->_decodeProperties($_smarty_tpl, array (
   array (
   ),
 ),false)) {
-function content_5865d0de0f33a1_59768127 (Smarty_Internal_Template $_smarty_tpl) {
+function content_58665aadef52c8_51625418 (Smarty_Internal_Template $_smarty_tpl) {
 ?>
 <!DOCTYPE html>
 <html>
@@ -78,7 +78,7 @@ function content_5865d0de0f33a1_59768127 (Smarty_Internal_Template $_smarty_tpl)
                 </div>
                 <div class="form-group">
                     <i class="fa fa-lock fa-lg"></i>
-                    <input class="form-control required" type="password" placeholder="Password" name="password" maxlength="8"/>
+                    <input class="form-control required" type="password" placeholder="Password" name="password"/>
                 </div>
                 <div class="form-group">
                     <label class="checkbox">
@@ -100,22 +100,22 @@ function content_5865d0de0f33a1_59768127 (Smarty_Internal_Template $_smarty_tpl)
             <div class="col-sm-9 col-md-9">
                 <div class="form-group">
                     <i class="fa fa-user fa-lg"></i>
-                    <input class="form-control required" type="text" placeholder="Username" name="username" autofocus="autofocus"/>
+                    <input class="form-control required" type="text" placeholder="Username" name="reg_username" autofocus="autofocus"/>
                 </div>
                 <div class="form-group">
                     <i class="fa fa-lock fa-lg"></i>
-                    <input class="form-control required" type="password" placeholder="Password" id="register_password" name="password"/>
+                    <input class="form-control required" type="password" placeholder="Password" id="register_password" name="reg_password"/>
                 </div>
                 <div class="form-group">
                     <i class="fa fa-check fa-lg"></i>
-                    <input class="form-control required" type="password" placeholder="Re-type Your Password" name="rpassword"/>
+                    <input class="form-control required" type="password" placeholder="Re-type Your Password" name="reg_rpassword"/>
                 </div>
                 <div class="form-group">
                     <i class="fa fa-envelope fa-lg"></i>
-                    <input class="form-control eamil" type="text" placeholder="Email" name="email"/>
+                    <input class="form-control eamil" type="text" placeholder="Email" name="reg_email"/>
                 </div>
                 <div class="form-group">
-                    <input type="submit" class="btn btn-success pull-right" value="Sign Up "/>
+                    <input type="submit" class="btn btn-success pull-right" id="js_sign_up" value="Sign Up "/>
                     <input type="button" class="btn btn-info pull-left" id="back_btn" value="Back"/>
                 </div>
             </div>

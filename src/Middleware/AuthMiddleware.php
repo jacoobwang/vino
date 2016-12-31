@@ -16,7 +16,7 @@ class AuthMiddleware extends Middleware{
         if ($this->_auth()) {
             return true;
         }
-        $this->redirect(BASE_URL.'reg');
+        $this->redirect(BASE_URL.'login');
     }
 
     /**
@@ -28,7 +28,7 @@ class AuthMiddleware extends Middleware{
         if ($session->exist('user')) {
             return true;
         }
-        return true;
+        return false;
     }
 
 }

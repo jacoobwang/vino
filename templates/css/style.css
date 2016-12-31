@@ -6,6 +6,12 @@ body {
 	background: url(../img/hero.jpg);
     background-size: cover;
 }
+a {
+	color: #fff;
+}
+.red {
+	color: red;
+}
 .container {
 	position: absolute;
 	width: 600px;
@@ -21,8 +27,14 @@ body {
     -moz-box-shadow:0 0 10px #0CC;  
     box-shadow:0 0 10px #0CC; 
 }
-.container .title {
+.container h1.title {
 	font-size: 40px;
+	font-weight: 600;
+	color: #ccc;
+	margin-bottom: 15px;
+}
+.container h3.title {
+	font-size: 30px;
 	font-weight: 600;
 	color: #ccc;
 	margin-bottom: 15px;

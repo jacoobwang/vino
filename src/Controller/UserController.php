@@ -7,7 +7,7 @@ use Ecc\Topic\Model\UserModel;
 class UserController extends \Mphp\BaseController{
 
     /**
-     * 渲染界面
+     * 渲染reigster界面
      */
     public function userAction(){
         $view = $this->di('view');
@@ -17,15 +17,46 @@ class UserController extends \Mphp\BaseController{
     }
 
     /**
+     * 渲染用户中心
+    **/
+    public function userCenterAction(){
+        $view = $this->di('view');
+        $view->assign('JS_CSS_DOMAIN', BASE_URL.'templates');
+        $view->display('user.html');
+    }
+
+    /**
      * @param $id
      * 登录
      */
     public function loginAction(){
-        $msg = isset($_POST['user'])?$_POST['user']:'jacoob';
         $data = [
-            'msg'   => 'hi,Welcome ' .$msg
+            'nickname' => $_POST['user'],
+            'password' => $_POST['pwd'],
         ];
-        $this->getResponse()->jsonResponse($data);
+
+        $user = new UserModel();
+        $ret = $user->login($data['nickname'], $data['password']);
+
+        if ($ret) {
+            $rs = [
+                'nickname'  => $data['nickname']
+            ];
+            $session = $this->di('session');
+            $session->set('user', $data['nickname']);
+            $this->getResponse()->jsonResponse($rs);
+        } else {
+            $this->getResponse()->jsonResponse('Db error',1);
+        }
+    }
+
+    /**
+     * logout
+    **/ 
+    public function logoutAction(){
+        $session = $this->di('session');
+        $session->delete('user');
+        $this->redirectUrl(BASE_URL.'login');
     }
 
     /**
@@ -33,17 +64,26 @@ class UserController extends \Mphp\BaseController{
      */
     public function regAction(){
         $data = [
-            'nickname' => 'jacoob',
-            'password' => 123456,
-            'email'    => '531532957@qq.com',
+            'nickname' => $_POST['user'],
+            'password' => $_POST['pwd'],
+            'email'    => $_POST['email'],
         ];
-        $user = new UserModel();
-        $ret = $user->add($data['nickname'], $data['password'], $data['email']);
 
-        if ($ret) {
-            $this->getResponse()->jsonResponse($data);
-        } else {
-            $this->getResponse()->jsonResponse('Db error',1);
+        $user = new UserModel();
+        $check = $user->getOne('nickname', $data['nickname']);
+        if($check) {
+            //nickname exis
+            $msg = '该用户名已被占用，请换用其他用户名'; 
+            $this->getResponse()->jsonResponse($msg, 1);
+        }else {
+            $ret = $user->add($data['nickname'], $data['password'], $data['email']);
+
+            if ($ret) {
+                $msg  = '注册成功，' .$data['nickname'];
+                $this->getResponse()->jsonResponse(['msg' => $msg]);
+            } else {
+                $this->getResponse()->jsonResponse('Db error',1);
+            }
         }
     }
 
@@ -61,7 +101,7 @@ class UserController extends \Mphp\BaseController{
         //从db中拉取
         if (empty($data)) {
             $user = new UserModel();
-            $data = $user->getOne($id);
+            $data = $user->getOne('id', $id);
             $redis->set($idx, $data, 1000);
         }
 

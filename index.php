@@ -40,7 +40,7 @@ if (!defined('IN_CLI')) {
 }
 
 // redis 默认关闭
-/**$di->register('redis',function() use($di) {
+$di->register('redis',function() use($di) {
     $cfg = $di['config']->get('redis');
     $inst = new \Redis();
     $host= $cfg['default']['host'];
@@ -51,7 +51,7 @@ if (!defined('IN_CLI')) {
     }
     $inst->connect($host, $port);
     return $inst;
-});**/
+});
 
 
 $di->register('router', function () use($di) {
@@ -65,7 +65,8 @@ $di->register('router', function () use($di) {
     $router->addRoutes(
         [
             'article/{id}'       => 'IndexController/del',
-            'reg'                => 'UserController/user',
+            'login'              => 'UserController/user',
+            'logout'             => 'UserController/logout',   
         ]
     );
 
@@ -82,6 +83,7 @@ $di->register('router', function () use($di) {
     $router->addRoutes(
         [
             'api/user/{id}'      => 'UserController/getUserInfo',
+            'userInfo'           => 'UserController/userCenter'
         ],
         [
             'middleware'  => 'AuthMiddleware',
