@@ -16,8 +16,15 @@ class MCache implements ICache {
     public function __construct() {
         $mc = new \Memcached();
         $mc_config = App::getSingleton()->di('config')->get('memcache');
+        $optionFlag = false;
         foreach ($mc_config as $value) {
             $mc->addServer($value['host'],$value['port']);
+            if(isset($value['sasl']) && !$optionFlag) {
+                $mc->setOption(\Memcached::OPT_COMPRESSION, false);//关闭压缩功能
+                $mc->setOption(\Memcached::OPT_BINARY_PROTOCOL, true);//使用binary二进制协议
+                $mc->setSaslAuthData($value['sasl']['username'],$value['sasl']['password']);
+                $optionFlag = true;
+            }
         }
         $this->_mc = $mc;
     }
