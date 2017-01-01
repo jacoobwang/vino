@@ -8,8 +8,8 @@
 namespace Ecc\Topic;
 error_reporting(E_ALL);
 
-define('SITE_ROOT', __DIR__);
-define('DEBUG', true);
+const SITE_ROOT =  __DIR__;
+const DEBUG     =  true;
 require __DIR__ . '/vendor/autoload.php';
 
 

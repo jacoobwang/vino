@@ -65,12 +65,12 @@ class UserModel
         return $this->getDb()->update($this->getTableName(), $data, QWhere::create()->eq('id',$id));
     }
 
-    function login($nickname, $password)
+    function isExists($nickname)
     {
         $sel = QSelect::create()
-        ->selectAll()
+        ->select('id')
         ->from($this->getTableName())
-        ->where(QWhere::create()->eq('nickname', $nickname)->eq('password', md5($password)));
+        ->where(QWhere::create()->eq('nickname', $nickname));
 
         $data = $this->getDb()->fetchRow($sel);
         return $data;

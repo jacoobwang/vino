@@ -2,7 +2,7 @@
 
 namespace Ecc\Topic\Controller;
 
-use Ecc\Topic\Model\UserModel;
+use Ecc\Topic\Service\UserService;
 
 class UserController extends \Mphp\BaseController{
 
@@ -26,7 +26,6 @@ class UserController extends \Mphp\BaseController{
     }
 
     /**
-     * @param $id
      * 登录
      */
     public function loginAction(){
@@ -35,23 +34,21 @@ class UserController extends \Mphp\BaseController{
             'password' => $_POST['pwd'],
         ];
 
-        $user = new UserModel();
-        $ret = $user->login($data['nickname'], $data['password']);
-
+        $user = new UserService();
+        $ret = $user->validateUserPwd($data['nickname'], $data['password']);
+        
         if ($ret) {
-            $rs = [
-                'nickname'  => $data['nickname']
-            ];
+            unset($data['password']);
             $session = $this->di('session');
             $session->set('user', $data['nickname']);
-            $this->getResponse()->jsonResponse($rs);
+            $this->getResponse()->jsonResponse($data);
         } else {
             $this->getResponse()->jsonResponse('Db error',1);
         }
     }
 
     /**
-     * logout
+     * 登出
     **/ 
     public function logoutAction(){
         $session = $this->di('session');
@@ -69,18 +66,16 @@ class UserController extends \Mphp\BaseController{
             'email'    => $_POST['email'],
         ];
 
-        $user = new UserModel();
-        $check = $user->getOne('nickname', $data['nickname']);
-        if($check) {
-            //nickname exis
-            $msg = '该用户名已被占用，请换用其他用户名'; 
-            $this->getResponse()->jsonResponse($msg, 1);
-        }else {
-            $ret = $user->add($data['nickname'], $data['password'], $data['email']);
+        $user = new UserService();
+
+        if($user->validateNicknameExists($data['nickname'])) { 
+            //nickname exists
+            $this->getResponse()->jsonResponse('该用户名已被占用，请换用其他用户名', 1);
+        } else {
+            $ret = $user->reg($data['nickname'], $data['password'], $data['email']);
 
             if ($ret) {
-                $msg  = '注册成功，' .$data['nickname'];
-                $this->getResponse()->jsonResponse(['msg' => $msg]);
+                $this->getResponse()->jsonResponse(['msg' => '注册成功，' .$data['nickname']]);
             } else {
                 $this->getResponse()->jsonResponse('Db error',1);
             }
@@ -96,13 +91,15 @@ class UserController extends \Mphp\BaseController{
 
         // 从redis中拉取
         $redis= $this->di('redis');
-        if($redis) $data = $redis->get($idx);
-
+        if($redis){
+            $data = $redis->get($idx);
+        }
+            
         //从db中拉取
         if (empty($data)) {
-            $user = new UserModel();
+            $user = new UserService();
             $data = $user->getOne('id', $id);
-            $redis->set($idx, $data, 1000);
+            $redis->set($idx, $data, 3600000);
         }
 
         $this->getResponse()->jsonResponse($data);
