@@ -11,6 +11,7 @@ namespace Mphp;
 use Monolog\Logger;
 use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\ChromePHPHandler;
+use Monolog\Processor\WebProcessor;
 
 
 class MLogger implements ILogger {
@@ -25,7 +26,7 @@ class MLogger implements ILogger {
      * @param string $log_file LOG文件
      * @param string $tag_name 日志TAG
      */
-    public function __construct($log_file, $tag_name = 'cutelog') {
+    public function __construct($log_file, $tag_name = 'mphp') {
         $this->_log_file = $log_file;
         $this->_logger = $this->createLogger($tag_name, $log_file);
     }
@@ -35,9 +36,7 @@ class MLogger implements ILogger {
         if (!empty($log_file)) {
             $log->pushHandler(new RotatingFileHandler($log_file, Logger::DEBUG));
         }
-        //if (defined('IN_CLI')){
-        //    $log->pushHandler(new StreamHandler('php://stdout', 30, Logger::DEBUG));
-        //}
+
         return $log;
     }
 
@@ -61,24 +60,6 @@ class MLogger implements ILogger {
         return implode(' ', $outputs);
     }
 
-    public function format() {
-        if (func_num_args() < 2) {
-            return '';
-        }
-        $args = func_get_args();
-        $fmt = array_shift($args);
-        $lines = explode('{}', $fmt);
-        $ret = array($lines[0]);
-        $l = count($lines);
-        for ($i = 1; $i < $l; ++$i) {
-            if (isset($args[$i])) {
-                $ret[] = $args[$i];
-            }
-            $ret[] = $lines[$i];
-        }
-        return implode('', $ret);
-    }
-
     /**
      * 允许输出到日志到CHROME的控制台，需安装扩展
      * https://chrome.google.com/webstore/detail/chromephp/noaneddfkdjfnfdakjjmocngnfkfehhd
@@ -86,6 +67,10 @@ class MLogger implements ILogger {
      */
     public function setAllowChromeLog() {
         $this->_logger->pushHandler(new ChromePHPHandler());
+    }
+
+    public function setWebProcessor() {
+        $this->_logger->pushProcessor(new WebProcessor());
     }
 
     public function debug() {

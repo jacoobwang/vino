@@ -30,6 +30,7 @@ class BaseController {
      */
     public function __construct() {
         $this->_app = App::getSingleton();
+        $this->di('log')->info('header');
     }
 
     /**

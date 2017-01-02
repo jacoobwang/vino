@@ -10,19 +10,23 @@ class UserController extends \Mphp\BaseController{
      * 渲染reigster界面
      */
     public function userAction(){
-        $view = $this->di('view');
-        $view->assign('csrfToken', $this->csrfToken());
-        $view->assign('JS_CSS_DOMAIN', BASE_URL.'templates');
-        $view->display('register.html');
+        $view = $this->di('twig');
+        echo $view->render('register.html', array(
+            'JS_CSS_DOMAIN' => BASE_URL.'templates',
+            'csrfToken'     => $this->csrfToken()
+        ));
     }
 
     /**
      * 渲染用户中心
     **/
     public function userCenterAction(){
-        $view = $this->di('view');
-        $view->assign('JS_CSS_DOMAIN', BASE_URL.'templates');
-        $view->display('user.html');
+        $view = $this->di('twig');
+        $session = $this->di('session');
+        echo $view->render('user.html', array(
+            'JS_CSS_DOMAIN' => BASE_URL.'templates',
+            'username'      => $session->get('user')
+        ));
     }
 
     /**

@@ -9,7 +9,7 @@
     <!--font-awesome 核心我CSS 文件-->
     <link href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- 在bootstrap.min.js 之前引入 -->
-    <script src="{{$JS_CSS_DOMAIN}}/js/jquery.min.js"></script>
+    <script src="{{JS_CSS_DOMAIN}}/js/jquery.min.js"></script>
     <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
     <!-- Bootstrap 核心 JavaScript 文件 -->
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
@@ -41,7 +41,7 @@
             <div class="col-sm-9 col-md-9">
                 <div class="form-group">
                     <i class="fa fa-user fa-lg"></i>
-                    <input type="hidden" name="__csrfToken" value="{{$csrfToken}}">
+                    <input type="hidden" name="__csrfToken" value="{{csrfToken}}">
                     <input class="form-control required" type="text" placeholder="Username" name="username" autofocus="autofocus" maxlength="20"/>
                 </div>
                 <div class="form-group">
@@ -90,6 +90,6 @@
         </form>
     </div>
 </div>
-<script type="text/javascript" src="{{$JS_CSS_DOMAIN}}/js/reg.js" ></script>
+<script type="text/javascript" src="{{JS_CSS_DOMAIN}}/js/reg.js" ></script>
 </body>
 </html>

@@ -5,21 +5,12 @@
     <title>Welcome Mphp</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta http-equiv="Pragma" content="no-cache">
-    <link rel="stylesheet" type="text/css" href="{{$JS_CSS_DOMAIN}}/css/style.css">
+    <link rel="stylesheet" type="text/css" href="{{JS_CSS_DOMAIN}}/css/style.css">
 </head>
 <body>
 <div class="container">
-	<img src="{{$JS_CSS_DOMAIN}}/img/mphp-logo.png">
-	<h3 class="title">Welcome , <span class="red" id="user"></span> this is your page <br><a id="js_logout" href="/mphp/logout">Login out</a></h3>
+	<img src="{{JS_CSS_DOMAIN}}/img/mphp-logo.png">
+	<h3 class="title">Welcome {{username}}, <span class="red" id="user"></span> this is your page <br><a id="js_logout" href="/mphp/logout">Login out</a></h3>
 </div>
 </body>
-<script src="{{$JS_CSS_DOMAIN}}/js/jquery.min.js"></script>
-<script type="text/javascript">
-	$(function() {
-		$("#user").html(localStorage.nickname);
-		$("#js_logout").click(function(){
-			localStorage.removeItem("nickname");
-		});
-	})
-</script>
 </html>
