@@ -23,16 +23,13 @@ class UserService
 	 * 通过用户名＋密码验证是否准确
 	 * return boolen true|false
 	**/
-	public function validateUserPwd($user, $pwd){
+	public function findUser($user, $pwd){
 		$ret = $this->_instance->getOne('nickname', $user);
 		if ($ret) {
-			$password = $ret['password'] || false;
-			if(md5($pwd) == $password) {
-				//succ
-				return true;
-			}   
-        } 
-        return false;
+			$password = $ret['password'] || false; 
+			return md5($pwd) == $password;
+		} 
+		return false;
 	}
 
 	/**
@@ -40,11 +37,7 @@ class UserService
 	 * return boolen true|false
 	**/
 	public function validateNicknameExists($user){
-		$ret = $this->_instance->isExists($user);
-		if($ret) {
-			return true;
-		}
-		return false;
+		return $this->_instance->isNicknameExists($user);
 	}
 
 	/**
@@ -57,7 +50,7 @@ class UserService
 	/**
 	 * 通过id获取用户信息
 	**/
-	public function getUserInfoById($id){
+	public function getUserById($id){
 		return $this->_instance->getOne('id', $id);
 	}
 

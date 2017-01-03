@@ -39,7 +39,7 @@ class UserController extends \Mphp\BaseController{
         ];
 
         $user = new UserService();
-        $ret = $user->validateUserPwd($data['nickname'], $data['password']);
+        $ret = $user->findUser($data['nickname'], $data['password']);
         
         if ($ret) {
             unset($data['password']);
@@ -95,15 +95,13 @@ class UserController extends \Mphp\BaseController{
 
         // 从redis中拉取
         $redis= $this->di('redis');
-        if($redis){
-            $data = $redis->get($idx);
-        }
-            
+        $data = $redis->get($idx);
+
         //从db中拉取
         if (empty($data)) {
             $user = new UserService();
-            $data = $user->getOne('id', $id);
-            $redis->set($idx, $data, 3600000);
+            $data = $user->getUserById($id);
+            $redis->set($idx, $data, 3600000);    
         }
 
         $this->getResponse()->jsonResponse($data);

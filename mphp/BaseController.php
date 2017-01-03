@@ -85,7 +85,8 @@ class BaseController {
         try{
             return call_user_func_array(array($this->_app, 'di'), func_get_args());
         }catch (\Exception $e){
-            Response::jsonResponse($e->getMessage(), 0);
+            Response::jsonResponse($e->getMessage(), $e->getCode());
+            $this->di('log')->error($e->getMessage());
         }
     }
 
