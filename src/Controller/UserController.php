@@ -39,7 +39,7 @@ class UserController extends \Mphp\BaseController{
         ];
 
         $user = new UserService();
-        $ret = $user->validateUserPwd($data['nickname'], $data['password']);
+        $ret = $user->findUser($data['nickname'], $data['password']);
         
         if ($ret) {
             unset($data['password']);
@@ -102,7 +102,7 @@ class UserController extends \Mphp\BaseController{
         //从db中拉取
         if (empty($data)) {
             $user = new UserService();
-            $data = $user->getOne('id', $id);
+            $data = $user->getUserById($id);
             $redis->set($idx, $data, 3600000);
         }
 

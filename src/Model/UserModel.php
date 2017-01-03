@@ -65,7 +65,7 @@ class UserModel
         return $this->getDb()->update($this->getTableName(), $data, QWhere::create()->eq('id',$id));
     }
 
-    function isExists($nickname)
+    function isNicknameExists($nickname)
     {
         $sel = QSelect::create()
         ->select('id')
@@ -73,7 +73,7 @@ class UserModel
         ->where(QWhere::create()->eq('nickname', $nickname));
 
         $data = $this->getDb()->fetchRow($sel);
-        return $data;
+        return !empty($this->getDb()->fetchRow($sel));
     }
 
     function getOne($colmn, $val)
