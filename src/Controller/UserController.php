@@ -95,15 +95,13 @@ class UserController extends \Mphp\BaseController{
 
         // 从redis中拉取
         $redis= $this->di('redis');
-        if($redis){
-            $data = $redis->get($idx);
-        }
-            
+        $data = $redis->get($idx);
+
         //从db中拉取
         if (empty($data)) {
             $user = new UserService();
             $data = $user->getUserById($id);
-            $redis->set($idx, $data, 3600000);
+            $redis->set($idx, $data, 3600000);    
         }
 
         $this->getResponse()->jsonResponse($data);

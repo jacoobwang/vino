@@ -6,7 +6,7 @@
  * Time: 10:50 AM
  */
 namespace Ecc\Topic;
-error_reporting(E_ALL);
+//error_reporting(E_ALL);
 
 define('SITE_ROOT',  __DIR__);
 define('DEBUG',     true);
