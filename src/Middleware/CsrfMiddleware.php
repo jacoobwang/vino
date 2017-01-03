@@ -17,7 +17,7 @@ class CsrfMiddleware extends Middleware{
         if ($this->_vertify()) {
             return true;
         } else {
-            Response::jsonResponse('Csrf error',1);
+            Response::jsonResponse('Csrf error,pls reload page',1);
             exit;
         }
     }

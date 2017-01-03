@@ -9,7 +9,7 @@
     <!--font-awesome 核心我CSS 文件-->
     <link href="//cdn.bootcss.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
     <!-- 在bootstrap.min.js 之前引入 -->
-    <script src="{{$JS_CSS_DOMAIN}}/js/jquery.min.js"></script>
+    <script src="{{JS_CSS_DOMAIN}}/js/jquery.min.js"></script>
     <script src="http://static.runoob.com/assets/jquery-validation-1.14.0/dist/jquery.validate.min.js"></script>
     <!-- Bootstrap 核心 JavaScript 文件 -->
     <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script>
@@ -41,12 +41,12 @@
             <div class="col-sm-9 col-md-9">
                 <div class="form-group">
                     <i class="fa fa-user fa-lg"></i>
-                    <input type="hidden" name="__csrfToken" value="{{$csrfToken}}">
+                    <input type="hidden" name="__csrfToken" value="{{csrfToken}}">
                     <input class="form-control required" type="text" placeholder="Username" name="username" autofocus="autofocus" maxlength="20"/>
                 </div>
                 <div class="form-group">
                     <i class="fa fa-lock fa-lg"></i>
-                    <input class="form-control required" type="password" placeholder="Password" name="password" maxlength="8"/>
+                    <input class="form-control required" type="password" placeholder="Password" name="password"/>
                 </div>
                 <div class="form-group">
                     <label class="checkbox">
@@ -68,28 +68,28 @@
             <div class="col-sm-9 col-md-9">
                 <div class="form-group">
                     <i class="fa fa-user fa-lg"></i>
-                    <input class="form-control required" type="text" placeholder="Username" name="username" autofocus="autofocus"/>
+                    <input class="form-control required" type="text" placeholder="Username" name="reg_username" autofocus="autofocus"/>
                 </div>
                 <div class="form-group">
                     <i class="fa fa-lock fa-lg"></i>
-                    <input class="form-control required" type="password" placeholder="Password" id="register_password" name="password"/>
+                    <input class="form-control required" type="password" placeholder="Password" id="register_password" name="reg_password"/>
                 </div>
                 <div class="form-group">
                     <i class="fa fa-check fa-lg"></i>
-                    <input class="form-control required" type="password" placeholder="Re-type Your Password" name="rpassword"/>
+                    <input class="form-control required" type="password" placeholder="Re-type Your Password" name="reg_rpassword"/>
                 </div>
                 <div class="form-group">
                     <i class="fa fa-envelope fa-lg"></i>
-                    <input class="form-control eamil" type="text" placeholder="Email" name="email"/>
+                    <input class="form-control eamil" type="text" placeholder="Email" name="reg_email"/>
                 </div>
                 <div class="form-group">
-                    <input type="submit" class="btn btn-success pull-right" value="Sign Up "/>
+                    <input type="submit" class="btn btn-success pull-right" id="js_sign_up" value="Sign Up "/>
                     <input type="button" class="btn btn-info pull-left" id="back_btn" value="Back"/>
                 </div>
             </div>
         </form>
     </div>
 </div>
-<script type="text/javascript" src="{{$JS_CSS_DOMAIN}}/js/reg.js" ></script>
+<script type="text/javascript" src="{{JS_CSS_DOMAIN}}/js/reg.js" ></script>
 </body>
 </html>

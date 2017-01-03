@@ -2,30 +2,62 @@
 
 namespace Ecc\Topic\Controller;
 
-use Ecc\Topic\Model\UserModel;
+use Ecc\Topic\Service\UserService;
 
 class UserController extends \Mphp\BaseController{
 
     /**
-     * 渲染界面
+     * 渲染reigster界面
      */
     public function userAction(){
-        $view = $this->di('view');
-        $view->assign('csrfToken', $this->csrfToken());
-        $view->assign('JS_CSS_DOMAIN', BASE_URL.'templates');
-        $view->display('register.html');
+        $view = $this->di('twig');
+        echo $view->render('register.html', array(
+            'JS_CSS_DOMAIN' => BASE_URL.'templates',
+            'csrfToken'     => $this->csrfToken()
+        ));
     }
 
     /**
-     * @param $id
+     * 渲染用户中心
+    **/
+    public function userCenterAction(){
+        $view = $this->di('twig');
+        $session = $this->di('session');
+        echo $view->render('user.html', array(
+            'JS_CSS_DOMAIN' => BASE_URL.'templates',
+            'username'      => $session->get('user')
+        ));
+    }
+
+    /**
      * 登录
      */
     public function loginAction(){
-        $msg = isset($_POST['user'])?$_POST['user']:'jacoob';
         $data = [
-            'msg'   => 'hi,Welcome ' .$msg
+            'nickname' => $_POST['user'],
+            'password' => $_POST['pwd'],
         ];
-        $this->getResponse()->jsonResponse($data);
+
+        $user = new UserService();
+        $ret = $user->validateUserPwd($data['nickname'], $data['password']);
+        
+        if ($ret) {
+            unset($data['password']);
+            $session = $this->di('session');
+            $session->set('user', $data['nickname']);
+            $this->getResponse()->jsonResponse($data);
+        } else {
+            $this->getResponse()->jsonResponse('Db error',1);
+        }
+    }
+
+    /**
+     * 登出
+    **/ 
+    public function logoutAction(){
+        $session = $this->di('session');
+        $session->delete('user');
+        $this->redirectUrl(BASE_URL.'login');
     }
 
     /**
@@ -33,17 +65,24 @@ class UserController extends \Mphp\BaseController{
      */
     public function regAction(){
         $data = [
-            'nickname' => 'jacoob',
-            'password' => 123456,
-            'email'    => '531532957@qq.com',
+            'nickname' => $_POST['user'],
+            'password' => $_POST['pwd'],
+            'email'    => $_POST['email'],
         ];
-        $user = new UserModel();
-        $ret = $user->add($data['nickname'], $data['password'], $data['email']);
 
-        if ($ret) {
-            $this->getResponse()->jsonResponse($data);
+        $user = new UserService();
+
+        if($user->validateNicknameExists($data['nickname'])) { 
+            //nickname exists
+            $this->getResponse()->jsonResponse('该用户名已被占用，请换用其他用户名', 1);
         } else {
-            $this->getResponse()->jsonResponse('Db error',1);
+            $ret = $user->reg($data['nickname'], $data['password'], $data['email']);
+
+            if ($ret) {
+                $this->getResponse()->jsonResponse(['msg' => '注册成功，' .$data['nickname']]);
+            } else {
+                $this->getResponse()->jsonResponse('Db error',1);
+            }
         }
     }
 
@@ -56,13 +95,15 @@ class UserController extends \Mphp\BaseController{
 
         // 从redis中拉取
         $redis= $this->di('redis');
-        if($redis) $data = $redis->get($idx);
-
+        if($redis){
+            $data = $redis->get($idx);
+        }
+            
         //从db中拉取
         if (empty($data)) {
-            $user = new UserModel();
-            $data = $user->getOne($id);
-            $redis->set($idx, $data, 1000);
+            $user = new UserService();
+            $data = $user->getOne('id', $id);
+            $redis->set($idx, $data, 3600000);
         }
 
         $this->getResponse()->jsonResponse($data);

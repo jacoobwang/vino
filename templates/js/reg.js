@@ -23,6 +23,7 @@ $().ready(function() {
                 pwd  : $("input[name=password]").val(),
                 csrf : $("input[name=__csrfToken]").val(),
             };
+
             $.ajax(
                 {
                     url  : "/mphp/api/user/login",
@@ -32,7 +33,8 @@ $().ready(function() {
                     success : function(res){
                         console.log(res);
                         if(res.errno == 0) {
-                            alert(res.body.msg);
+                            localStorage.nickname = res.body.nickname;
+                            location.href="/mphp/userInfo";
                         } else {
                             alert(res.error);
                         }
@@ -69,6 +71,31 @@ $().ready(function() {
                 required: "请输入邮箱",
                 email: "请输入有效邮箱"
             }
+        },
+        submitHandler:function(){
+            var data = {
+                user : $("input[name=reg_username]").val(),
+                pwd  : $("input[name=reg_password]").val(),
+                csrf : $("input[name=__csrfToken]").val(),
+                email: $("input[name=reg_email]").val(),
+            };
+            $.ajax(
+                {
+                    url  : "/mphp/api/user/reg",
+                    type : "POST",
+                    data : data,
+                    dataType : "json",
+                    success : function(res){
+                        console.log(res);
+                        if(res.errno == 0) {
+                            alert(res.body.msg);
+                        } else {
+                            alert(res.error);
+                            location.reload();
+                        }
+                    }
+                }
+            );
         }
     });
 });

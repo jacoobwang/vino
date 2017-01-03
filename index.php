@@ -8,8 +8,8 @@
 namespace Ecc\Topic;
 error_reporting(E_ALL);
 
-define('SITE_ROOT', __DIR__);
-define('DEBUG', true);
+define('SITE_ROOT',  __DIR__);
+define('DEBUG',     true);
 require __DIR__ . '/vendor/autoload.php';
 
 
@@ -27,19 +27,27 @@ if (!defined('IN_CLI')) {
         return new \Mphp\Session();
     });
 
-    // smarty
-    $di->register('view', function () use($di) {
+    // twig
+    $di->register('twig', function () use($di) {
         $cfg = $di['config'];
-        $view =  new \Smarty();
-        $view->setTemplateDir(SITE_ROOT . '/' . $cfg->get('smarty/tpl_dir'));
-        $view->setCompileDir($cfg->get('smarty/compile_dir'));
-        $view->setLeftDelimiter('{{');
-        $view->setRightDelimiter('}}');
-        return $view;
+        $loader =  new \Twig_Loader_Filesystem(SITE_ROOT . '/' . $cfg->get('twig/tpl_dir'));
+        $twig    =  new \Twig_Environment($loader, array(
+            'cache' => $cfg->get('twig/compile_dir'),
+        ));
+        return $twig;
+    });
+
+    // monolog
+    $di->register('log', function () use($di) {
+        $log = new \Mphp\MLogger(SITE_ROOT.'/logs/app.log');
+        $log->setWebProcessor();   // 请求相关信息
+        //$log->setAllowChromeLog(); //将日志输出到chrome控制台
+        return $log;
     });
 }
 
-// redis 默认关闭
+
+// redis 如果本地没有安装redis，请注释掉本段代码
 $di->register('redis',function() use($di) {
     $cfg = $di['config']->get('redis');
     $inst = new \Redis();
@@ -53,7 +61,7 @@ $di->register('redis',function() use($di) {
     return $inst;
 });
 
-
+// 路由
 $di->register('router', function () use($di) {
     $base_url     = $di['config']->get('core/base_url');
     $route_style  = $di['config']->get('core/route_style');
@@ -65,7 +73,8 @@ $di->register('router', function () use($di) {
     $router->addRoutes(
         [
             'article/{id}'       => 'IndexController/del',
-            'reg'                => 'UserController/user',
+            'login'              => 'UserController/user',
+            'logout'             => 'UserController/logout',   
         ]
     );
 
@@ -82,6 +91,7 @@ $di->register('router', function () use($di) {
     $router->addRoutes(
         [
             'api/user/{id}'      => 'UserController/getUserInfo',
+            'userInfo'           => 'UserController/userCenter'
         ],
         [
             'middleware'  => 'AuthMiddleware',
@@ -91,6 +101,7 @@ $di->register('router', function () use($di) {
     return $router;
 });
 
+// db 
 $di->register('db', function () {
     return \Mphp\Db::getConnection();
 });
