@@ -28,8 +28,8 @@ class UserService
 		if ($ret) {
 			$password = $ret['password'] || false; 
 			return md5($pwd) == $password;
-        } 
-        return false;
+		} 
+		return false;
 	}
 
 	/**
