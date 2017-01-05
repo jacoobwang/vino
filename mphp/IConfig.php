@@ -7,7 +7,10 @@
  */
 
 namespace Mphp;
-
+/**
+ * Interface IConfig
+ * @package Mphp
+ */
 interface IConfig {
     public function get($key, $default=null);
 }

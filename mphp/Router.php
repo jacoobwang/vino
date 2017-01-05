@@ -1,6 +1,10 @@
 <?php
 namespace Mphp;
 
+/**
+ * Class Router
+ * @package Mphp
+ */
 class Router {
     /**
      * @var string 默认的路由KEY
@@ -59,6 +63,9 @@ class Router {
         }
     }
 
+    /**
+     * handle
+     */
     public function handle() {
         $req = Request::getSingleton();
 
@@ -244,7 +251,10 @@ class Router {
         return $this->toAbsoluteUrl($url);
     }
 
-
+    /**
+     * @param $url
+     * @return string
+     */
     private function toAbsoluteUrl($url) {
         if (empty($this->_base_url)) {
             $url = $this->_base_url . '/' . $url;

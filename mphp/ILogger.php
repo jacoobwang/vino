@@ -8,6 +8,10 @@
 
 namespace Mphp;
 
+/**
+ * Interface ILogger
+ * @package Mphp
+ */
 interface ILogger {
     public function debug();
     public function info();

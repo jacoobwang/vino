@@ -8,6 +8,10 @@
 
 namespace Mphp;
 
+/**
+ * Class MCache
+ * @package Mphp
+ */
 class MCache implements ICache {
 
     private $_mc;
@@ -103,12 +107,22 @@ class MCache implements ICache {
         return $this->_mc->decrement($key, $step);
     }
 
+    /**
+     * 检查key
+     * @param $key
+     * @throws \Exception
+     */
     private function checkKey($key) {
         if(!is_string($key)){
             throw ExceptionHelper::create('Memcache key must to be String type', 400101);
         }
     }
 
+    /**
+     * 检查是否过期
+     * @param $expr
+     * @return integer
+     */
     private function checkExpire($expr) {
         if(is_int($expr) && $expr>=0 && $expr<=2592000) {
             return $expr;
@@ -117,6 +131,11 @@ class MCache implements ICache {
         }
     }
 
+    /**
+     * key > 0
+     * @param $step
+     * @throws \Exception
+     */
     private function checkStep($step) {
         if(!is_int($step)||$step<=0) {
             throw ExceptionHelper::create('Memcache increment/decrement step must to be Integer type and large than zero', 400102);

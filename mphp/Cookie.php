@@ -8,7 +8,10 @@
 
 namespace Mphp;
 
-
+/**
+ * Class Cookie
+ * @package Mphp
+ */
 class Cookie implements ICookie {
 
     private $_path = ICookie::COOKIEPATH;
@@ -20,6 +23,10 @@ class Cookie implements ICookie {
         $this->_domain = $_SERVER['SERVER_NAME'];
     }
 
+    /**
+     * 解析cookie信息
+     * @param $ops
+     */
     private function parseOps($ops) {
         if(isset($ops['path'])) {
             $this->_path = $ops['path'];

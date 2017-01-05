@@ -1,6 +1,10 @@
 <?php
 namespace Mphp;
 
+/**
+ * Class Utils
+ * @package Mphp
+ */
 class Utils {
 
     /**
@@ -23,6 +27,11 @@ class Utils {
         }
     }
 
+    /**
+     * 获取随机串
+     * @param int $len
+     * @return string
+     */
     public static function randStr($len = 6) {
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         mt_srand((double)microtime() * 1000000 * getmypid()); // seed the random number generater (must be done)
@@ -110,7 +119,12 @@ class Utils {
         return $new;
     }
 
-
+    /**
+     * md5+盐
+     * @param $pwd
+     * @param string $salt
+     * @return string
+     */
     public static function md5Crypt($pwd, $salt = '') {
         if (empty($salt)) $salt = self::randStr(8);
         $salt2 = '$1$' . $salt . '$';

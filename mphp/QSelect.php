@@ -2,7 +2,11 @@
 namespace Mphp;
 
 
-
+/**
+ * Select Builder
+ * Class QSelect
+ * @package Mphp
+ */
 class QSelect {
     private $_order_by_list = array();
     private $_limit;
@@ -14,17 +18,23 @@ class QSelect {
     private $_params = array();
     private $_col_index = 0;
 
+    /**
+     * @return QSelect
+     */
     public static function create() {
         return new self();
     }
 
-
+    /**
+     * @return string
+     */
     private function newHolder() {
         return ':gfld' . $this->_col_index++;
     }
 
     /**
-     * 选择的列，支持的格式  'a,b,c' or array('a', 'b')
+     * select column
+     * format 'id,name,age' or array('id', 'name', 'age')
      * @return $this
      */
     public function select() {
@@ -47,41 +57,26 @@ class QSelect {
         return $this;
     }
 
+    /**
+     * select all
+     * @return $this
+     */
     public function selectAll() {
         $this->_cols[] = '*';
         return $this;
     }
 
-    public function escapeFieldName($col) {
-        $col = trim($col);
-
-        if (strpos($col, '`') !== false) {
-            return $col;
-        }
-
-        if (strpos($col, ' ') !== false) {
-            return $col;
-        }
-
-        if (strpos($col, '(') !== false) {
-            return $col;
-        }
-
-        return"`$col`";
-    }
-
     /**
-     * 对列名添加反转符号，不处理特殊表达式，sum(price), a as b, a+b
-     * @param $col
+     * @param string $col
      * @return string
      */
     private function addCol($col) {
-        $this->_cols[] = $this->escapeFieldName($col);
+        $this->_cols[] = $col;
     }
 
     /**
-     * 表名
-     * @param $table
+     * from
+     * @param string $table
      * @return $this
      */
     public function from($table) {
@@ -90,7 +85,8 @@ class QSelect {
     }
 
     /**
-     * @param $w string|array|QWhere
+     * where
+     * @param string|array|QWhere $w
      * @return $this
      */
     public function where($w) {
@@ -99,7 +95,7 @@ class QSelect {
     }
 
     /**
-     * Limit 一个参数表示限制数量，两个参数时，1：数量，2：位置
+     * limit
      * @return $this
      */
     public function limit() {
@@ -107,26 +103,40 @@ class QSelect {
         return $this;
     }
 
+    /**
+     * asc
+     * @param string $col
+     * @return $this
+     */
     public function asc($col) {
         $this->_order_by_list[] = Db::mysqlQuote($col) . ' ASC';
         return $this;
     }
 
+    /**
+     * desc
+     * @param string $col
+     * @return $this
+     */
     public function desc($col) {
         $this->_order_by_list[] = Db::mysqlQuote($col) . ' DESC';
         return $this;
     }
 
-
+    /**
+     * groupBy
+     * @param string $col
+     * @return $this
+     */
     public function groupBy($col) {
-        $this->_group_by = $this->escapeFieldName($col);;
+        $this->_group_by = $col;
         return $this;
     }
 
     /**
-     * Having 子句 eg: ('score > ? and level > ?', 98, 2)
+     * Having eg: ('score > ? and level > ?', 98, 2)
      * @param string $expr
-     * @param int|string $value
+     * @param integer|string $value
      * @return $this
      * @throws \Exception
      */
@@ -151,10 +161,18 @@ class QSelect {
         return $this;
     }
 
+    /**
+     * getParamList
+     * @return array
+     */
     public function getParamList() {
         return $this->_params;
     }
 
+    /**
+     * build sql
+     * @return string sql
+     */
     public function toSql() {
         $lines = array('SELECT');
         $lines[] = implode(',', $this->_cols);

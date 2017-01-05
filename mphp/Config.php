@@ -1,7 +1,16 @@
 <?php
-
+/**
+ * Created by PhpStorm.
+ * User: jacoob
+ * Date: 2015/7/13
+ * Time: 10:13
+ */
 namespace Mphp;
 
+/**
+ * Class Config
+ * @package Mphp
+ */
 class Config implements IConfig
 {
     private $config_info = array();
@@ -16,7 +25,13 @@ class Config implements IConfig
         $this->config_dir = $dir;
     }
 
-
+    /**
+     * 获取配置信息
+     * @param $key
+     * @param null $default
+     * @return null
+     * @throws \Exception
+     */
     public function get($key, $default=null)
     {
         if (!is_array($key)) {

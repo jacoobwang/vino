@@ -8,6 +8,10 @@
 
 namespace Mphp;
 
+/**
+ * Interface ICache
+ * @package Mphp
+ */
 interface ICache {
     /**
      * 设置缓存数据,不关心是否存在KEY

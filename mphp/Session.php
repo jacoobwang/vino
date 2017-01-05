@@ -1,9 +1,13 @@
 <?php
 namespace Mphp;
 
+/**
+ * Class Session
+ * @package Mphp
+ */
 class Session implements ISession {
 
-    public function __construct() {
+    function __construct() {
         $argNum = func_num_args();
         switch ($argNum) {
             case 0:
@@ -84,10 +88,17 @@ class Session implements ISession {
         return isset($_SESSION[$key]) ? true : false;
     }
 
+    /**
+     * @return mixed
+     */
     public function all() {
         return $_SESSION;
     }
 
+    /**
+     * @param $key
+     * @throws \Exception
+     */
     private function checkKey($key) {
         if(!is_string($key)) {
             throw ExceptionHelper::create('Session key must to be String type', 400001);

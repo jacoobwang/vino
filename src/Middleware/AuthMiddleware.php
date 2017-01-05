@@ -6,11 +6,15 @@ use Mphp\Middleware;
 
 /**
  * Class AuthMiddleware
- * 验证用户信息是否存在
+ * auth user
  * @package Ecc\Topic\Middleware
  */
 class AuthMiddleware extends Middleware{
 
+    /**
+     * middleware main function
+     * @return null
+     */
     public function handle()
     {
         if ($this->_auth()) {
@@ -20,7 +24,7 @@ class AuthMiddleware extends Middleware{
     }
 
     /**
-     * @return bool
+     * @return boolean
      */
     private function _auth()
     {

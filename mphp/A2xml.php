@@ -2,6 +2,10 @@
 
 namespace Mphp;
 
+/**
+ * Class A2xml
+ * @package Mphp
+ */
 class A2xml {
     private $version = '1.0';
     private $encoding = 'UTF-8';
@@ -12,6 +16,11 @@ class A2xml {
         $this->xml = new \XmlWriter();
     }
 
+    /**
+     * @param array $data
+     * @param boolean $eIsArray
+     * @return string xml
+     */
     function toXml($data, $eIsArray = FALSE) {
         if (!$eIsArray) {
             $this->xml->openMemory();

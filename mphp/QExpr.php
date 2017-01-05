@@ -3,9 +3,8 @@
 namespace Mphp;
 
 /**
- * SQL表达式及参数
- * Class QExpression
- * @package Cutephp
+ * Class QExpr
+ * @package Mphp
  */
 class QExpr {
     private static $index = 0;

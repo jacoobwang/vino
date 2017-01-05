@@ -8,6 +8,10 @@
 
 namespace Mphp;
 
+/**
+ * Class BaseController
+ * @package Mphp
+ */
 class BaseController {
     /**
      * @var App
@@ -26,8 +30,6 @@ class BaseController {
      */
     private $_reponse;
 
-    /**
-     */
     public function __construct() {
         $this->_app = App::getSingleton();
         $this->di('log')->info('header');
@@ -36,16 +38,14 @@ class BaseController {
     /**
      * @return App
      */
-    public function getApp()
-    {
+    public function getApp() {
         return $this->_app;
     }
 
     /**
      * @return Request
      */
-    public function getRequest()
-    {
+    public function getRequest() {
         if ($this->_request == null) {
             $this->_request = Request::getSingleton();
         }
@@ -80,26 +80,13 @@ class BaseController {
     /**
      * @return DI
      */
-    public function di()
-    {
+    public function di() {
         try{
             return call_user_func_array(array($this->_app, 'di'), func_get_args());
         }catch (\Exception $e){
             Response::jsonResponse($e->getMessage(), $e->getCode());
             $this->di('log')->error($e->getMessage());
         }
-    }
-
-
-    /**
-     * @param $action string controller/action  or action
-     * @param null $params array
-     */
-    public function redirect($action, $params=null) {
-        /** @var Router $router */
-        $router = $this->di('router');
-        $url = $router->getActionUrl($action, $params);
-        $this->redirectUrl($url);
     }
 
     /**
@@ -117,17 +104,22 @@ class BaseController {
         exit;
     }
 
+    /**
+     * 获取ControllerName
+     * @return string
+     */
     public function getControllerName() {
         /** @var Router $router */
-        $router = $this->di('router');
-        return $router->getControllerName();
+        return $this->di('router')->getControllerName();
     }
 
+    /**
+     * 获取ActionName
+     * @return string
+     */
     public function getActionName() {
         /** @var Router $router */
-        $router = $this->di('router');
-        return $router->getActionName();
+        return $this->di('router')->getActionName();
     }
-
 
 }

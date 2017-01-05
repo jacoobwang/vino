@@ -1,5 +1,10 @@
 <?php
 namespace Mphp;
+
+/**
+ * Class MCurl
+ * @package Mphp
+ */
 class MCurl {
     private $http_code_ = 0;
     private $errno_ = 0;
@@ -46,11 +51,18 @@ class MCurl {
         return $this->http_code_;
     }
 
-
+    /**
+     * @return bool|mixed|string
+     */
     public function httpGet() {
         return $this->send();
     }
 
+    /**
+     * @param array $params
+     * @param array $options
+     * @return bool|mixed|string
+     */
     public function httpPost($params = array(), $options = array()) {
         // If its an array (instead of a query string) then format it correctly
         if (is_array($params)) {
@@ -63,10 +75,17 @@ class MCurl {
         return $this->send();
     }
 
+    /**
+     * @param $header
+     * @param null $content
+     */
     public function httpHeader($header, $content = NULL) {
         $this->headers_[] = $content ? $header . ': ' . $content : $header;
     }
 
+    /**
+     * @return bool|mixed|string
+     */
     private function send() {
         // Set two default options_, and merge any extra ones in
         if (!isset($this->options_[CURLOPT_TIMEOUT])) {
@@ -103,6 +122,12 @@ class MCurl {
         }
     }
 
+    /**
+     * @param bool $verify_peer
+     * @param int $verify_host
+     * @param null $path_to_cert
+     * @return $this
+     */
     public function ssl($verify_peer = TRUE, $verify_host = 2, $path_to_cert = NULL) {
         if ($verify_peer) {
             $this->option(CURLOPT_SSL_VERIFYPEER, TRUE);
@@ -114,6 +139,10 @@ class MCurl {
         return $this;
     }
 
+    /**
+     * @param array $options
+     * @return $this
+     */
     public function options($options = array()) {
         // Merge options in with the rest - done as array_merge() does not overwrite numeric keys
         foreach ($options as $option_code => $option_value) {
@@ -124,6 +153,11 @@ class MCurl {
         return $this;
     }
 
+    /**
+     * @param $code
+     * @param $value
+     * @return $this
+     */
     public function option($code, $value) {
         if (is_string($code) && !is_numeric($code)) {
             $code = constant('CURLOPT_' . strtoupper($code));

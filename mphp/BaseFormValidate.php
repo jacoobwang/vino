@@ -8,7 +8,10 @@
 
 namespace Mphp;
 
-
+/**
+ * Class BaseFormValidate
+ * @package Mphp
+ */
 class BaseFormValidate
 {
     //预定义规则 添加新的预定义规则只需要把规则名添加到$_preRules,然后定义baseRule方法
@@ -71,7 +74,7 @@ class BaseFormValidate
     /**
      * require校验,填充校验结果
      * @param $field
-     * @return bool
+     * @return boolean
      */
     protected function baseRequire($field) {
         if(is_string($this->_data[$field]) && strlen($this->_data[$field])>0) {
@@ -84,16 +87,34 @@ class BaseFormValidate
         return $result;
     }
 
+    /**
+     * minlen校验
+     * @param $field
+     * @param $ops
+     * @return boolean
+     */
     protected function baseMinLen($field, $ops) {
         $len = $ops;
         return mb_strlen($this->_data[$field]) >= $len;
     }
 
+    /**
+     * maxlen校验
+     * @param $field
+     * @param $ops
+     * @return boolean
+     */
     protected function baseMaxLen($field, $ops) {
         $len = $ops;
         return mb_strlen($this->_data[$field]) <= $len;
     }
 
+    /**
+     * 在某个范围内
+     * @param $field
+     * @param $ops
+     * @return boolean
+     */
     protected function baseBetweenLen($field, $ops) {
         $minLen = $ops[0];
         $maxLen = $ops[1];
@@ -186,10 +207,16 @@ class BaseFormValidate
         }
     }
 
+    /**
+     * @return array
+     */
     public function getPreRules() {
         return $this->_preRules;
     }
 
+    /**
+     * @return array
+     */
     public function getRules() {
         return $this->_rules;
     }

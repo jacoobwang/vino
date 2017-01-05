@@ -6,9 +6,11 @@
  * Time: 11:56 AM
  */
 
-
 namespace Mphp;
-
+/**
+ * Interface ICookie
+ * @package Mphp
+ */
 interface ICookie {
     const COOKIEPATH = '/';
     const COOKIESECURE = false;

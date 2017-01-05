@@ -1,6 +1,10 @@
 <?php
 namespace Mphp;
 
+/**
+ * Class ParamPackage
+ * @package Mphp
+ */
 class ParamPackage {
     private $key = 'mphp001';
 

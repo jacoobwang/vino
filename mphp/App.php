@@ -8,10 +8,10 @@
 
 namespace Mphp;
 
-ini_set('date.timezone','Asia/Shanghai');
-define('TIMESTAMP', time());
-
-
+/**
+ * Class App
+ * @package Mphp
+ */
 class App
 {
 
@@ -31,6 +31,9 @@ class App
      */
     private $_di;
 
+    /**
+     * @var string controller namespace
+     */
     private $_controller_namespace = '\\App\\Controller\\';
 
     private $_datetime;
@@ -40,6 +43,9 @@ class App
         $this->_initDi();
     }
 
+    /**
+     * init
+     */
     private function _initDi()
     {
         $di = new DI();

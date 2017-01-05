@@ -7,11 +7,15 @@ use Mphp\Response;
 
 /**
  * Class AuthMiddleware
- * 验证用户信息是否存在
+ * check csrf
  * @package Ecc\Topic\Middleware
  */
 class CsrfMiddleware extends Middleware{
 
+    /**
+     * middleware main function
+     * @return null
+     */
     public function handle()
     {
         if ($this->_vertify()) {

@@ -1,7 +1,10 @@
 <?php
 namespace Mphp;
 
-
+/**
+ * Class Response
+ * @package Mphp
+ */
 class Response {
     /**
      * Query 参数，指定JSONP回调函数名的参数KEY
@@ -13,7 +16,10 @@ class Response {
      */
     const RESPONSE_FORMAT_QUERY_KEY = 'of';
 
-
+    /**
+     * 404 NOT FOUND
+     * @param string $msg
+     */
     public static function errorNotFound($msg='') {
         header('HTTP/1.1 404 Not Found');
         echo 'Not found';
@@ -25,6 +31,10 @@ class Response {
         exit;
     }
 
+    /**
+     * 错误信息
+     * @param string $msg
+     */
     public static function errorBadRequest($msg='') {
         header('HTTP/1.1 400 Bad Request');
         echo 'Bad Request';
@@ -36,6 +46,10 @@ class Response {
         exit;
     }
 
+    /**
+     * header
+     * @param string $type
+     */
     public static function headerUTF8($type = 'text/html') {
         header("Content-type: {$type}; charset=utf-8");
     }
@@ -73,7 +87,11 @@ class Response {
         echo json_encode($ret);
     }
 
-
+    /**
+     * 以jsonp格式返回
+     * @param $content
+     * @param int $code
+     */
     public static function jsonpResponse($content, $code = 0) {
         $ret = self::_response($content, $code);
 
@@ -92,7 +110,11 @@ class Response {
         echo $cb . '(' . json_encode($ret) . ')';
     }
 
-
+    /**
+     * 以xml格式返回
+     * @param $content
+     * @param int $code
+     */
     public static function xmlResponse($content, $code = 0) {
         $ret = self::_response($content, $code);
 
@@ -102,9 +124,13 @@ class Response {
         echo $inst_xml->toXml($ret);
     }
 
-
+    /**
+     * 从url中指定返回格式
+     * @param $content
+     * @param int $code
+     */
     public static function response($content, $code = 0) {
-        $defined_of = array('json', 'xml', 'jsonp', 'pa');
+        $defined_of = array('json', 'xml', 'jsonp');
         $qs_key = self::RESPONSE_FORMAT_QUERY_KEY;
         /** @var Request $req */
         $req = Request::getSingleton();

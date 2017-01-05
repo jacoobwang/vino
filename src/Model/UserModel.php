@@ -13,77 +13,104 @@ use Mphp\Db;
 use Mphp\QSelect;
 use Mphp\QWhere;
 
+/**
+ * User Db Model
+ *
+ * Class UserModel
+ * @package Ecc\Topic\Model
+ */
 class UserModel
 {
     private $di;
+    private $model;
 
     /**
      * @var string
      */
     private $table = 'ecc_user';
 
-    public function __construct()
-    {
+    public function __construct(){
         $this->di = App::getSingleton()->getSingleton()->di();
+        $this->model = $this->di->get('db');
     }
 
     /**
-     * @return Db
-     * @throws \Exception
+     * insert one user record
+     *
+     * @param string $nickname
+     * @param string $password
+     * @param string $email
+     * @return boolean
      */
-    private function getDb()
-    {
-        return $this->di->get('db');
-    }
-
-    /**
-     * @return string
-     */
-    private function getTableName()
-    {
-        return $this->table;
-    }
-
-    function add($nickname, $password, $email)
-    {
+    public function add($nickname, $password, $email){
         $data = array(
             'nickname' => $nickname,
             'password' => md5($password),
             'email'    => $email,
             'cdate'    => App::getSingleton()->getDatetime(),
         );
-        return $this->getDb()->insert($this->getTableName(), $data) == 1;
+        return $this->model->insert($this->table, $data) == 1;
     }
 
-    function update($nickname, $password, $email, $id)
-    {
+    /**
+     * update user record
+     *
+     * @param string $nickname
+     * @param string $password
+     * @param string $email
+     * @param integer $id
+     * @return integer
+     */
+    public function update($nickname, $password, $email, $id){
         $data = [
             'nickname' => $nickname,
             'password' => $password,
             'email'    => $email,
         ];
-        return $this->getDb()->update($this->getTableName(), $data, QWhere::create()->eq('id',$id));
+        return $this->model->update($this->table, $data, QWhere::create()->eq('id',$id));
     }
 
-    function isNicknameExists($nickname)
-    {
+    /**
+     * delete user record
+     *
+     * @param string  $id
+     * @param integer $limit
+     * @return mixed
+     */
+    public function delete($id, $limit){
+        return $this->model->delete($this->table, QWhere::create()->eq('id',$id), $limit);
+    }
+
+    /**
+     * check username exists
+     *
+     * @param string $nickname
+     * @return boolean
+     */
+    public function isNicknameExists($nickname){
         $sel = QSelect::create()
         ->select('id')
-        ->from($this->getTableName())
+        ->from($this->table)
         ->where(QWhere::create()->eq('nickname', $nickname));
 
-        $data = $this->getDb()->fetchRow($sel);
-        return !empty($this->getDb()->fetchRow($sel));
+        $data = $this->model->fetchRow($sel);
+        return !empty($data);
     }
 
-    function getOne($colmn, $val)
-    {
+    /**
+     * get record according column
+     *
+     * @param string $colmn table column
+     * @param string $val  value
+     * @return mixed
+     */
+    public function getOne($colmn, $val){
         $sel = QSelect::create()
         ->selectAll()
-        ->from($this->getTableName())
+        ->from($this->table)
         ->where(QWhere::create()->eq($colmn, $val));
 
-        $data = $this->getDb()->fetchRow($sel);
+        $data = $this->model->fetchRow($sel);
         return $data;
     }
 

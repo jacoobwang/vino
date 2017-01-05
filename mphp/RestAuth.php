@@ -2,13 +2,18 @@
 
 namespace Mphp;
 
+/**
+ * Class RestAuth
+ * @package Mphp
+ */
 class RestAuth {
 
+    /**
+     * 创建合法请求字符串
+     * @param $parameters
+     * @return string
+     */
     public static function build_query_string($parameters) {
-        //        $s = http_build_query($parameters);
-        //        $s = str_replace( array('+', '%7E'), array('%20', '~'), $s);
-        //        return $s;
-
         // RFC3986
         // http://en.wikipedia.org/wiki/Percent-encoding#References
         $arr = array();
@@ -22,6 +27,9 @@ class RestAuth {
 
     private $key_ = '';
 
+    /**
+     * @var int
+     */
     private $timeout_ = 600;
 
     private $algorithm = 'md5';
@@ -31,6 +39,7 @@ class RestAuth {
     }
 
     /**
+     * 设置timeout时间
      * @param int $timeout_
      */
     public function setTimeout($timeout_) {
@@ -39,6 +48,7 @@ class RestAuth {
 
 
     /**
+     * 设置加密方式
      * @param string $algorithm
      * @return bool
      */
@@ -52,7 +62,11 @@ class RestAuth {
         }
     }
 
-
+    /**
+     * 用HMAC 模式生成一个包含密钥的哈希码
+     * @param $params
+     * @return string
+     */
     public function hmac($params) {
         $key = $this->key_;
         ksort($params);
@@ -61,6 +75,12 @@ class RestAuth {
         return $ret;
     }
 
+    /**
+     * 创建请求串
+     * @param $params
+     * @param $appid
+     * @return string
+     */
     public function buildRequestParam($params, $appid) {
         $key = $this->key_;
         $params['expires'] = time() + $this->timeout_;
@@ -71,6 +91,7 @@ class RestAuth {
 
 
     /**
+     * 验证请求
      * @param $params
      * @return int
      */

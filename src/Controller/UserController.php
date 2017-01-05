@@ -7,7 +7,7 @@ use Ecc\Topic\Service\UserService;
 class UserController extends \Mphp\BaseController{
 
     /**
-     * 渲染reigster界面
+     * render user login and register page
      */
     public function userAction(){
         $view = $this->di('twig');
@@ -18,7 +18,7 @@ class UserController extends \Mphp\BaseController{
     }
 
     /**
-     * 渲染用户中心
+     * render user page
     **/
     public function userCenterAction(){
         $view = $this->di('twig');
@@ -30,12 +30,12 @@ class UserController extends \Mphp\BaseController{
     }
 
     /**
-     * 登录
+     * login logic
      */
     public function loginAction(){
         $data = [
-            'nickname' => $_POST['user'],
-            'password' => $_POST['pwd'],
+            'nickname' => $this->getRequest()->post('user'),
+            'password' => $this->getRequest()->post('post')
         ];
 
         $user = new UserService();
@@ -52,7 +52,7 @@ class UserController extends \Mphp\BaseController{
     }
 
     /**
-     * 登出
+     * logut logic
     **/ 
     public function logoutAction(){
         $session = $this->di('session');
@@ -61,22 +61,22 @@ class UserController extends \Mphp\BaseController{
     }
 
     /**
-     * 注册
+     * register logic
      */
     public function regAction(){
         $data = [
-            'nickname' => $_POST['user'],
-            'password' => $_POST['pwd'],
-            'email'    => $_POST['email'],
+            'nickname' => $this->getRequest()->post('user'),
+            'password' => $this->getRequest()->post('pwd'),
+            'email'    => $this->getRequest()->post('email')
         ];
 
         $user = new UserService();
 
-        if($user->validateNicknameExists($data['nickname'])) { 
+        if($user->validateUsername($data['nickname'])) {
             //nickname exists
             $this->getResponse()->jsonResponse('该用户名已被占用，请换用其他用户名', 1);
         } else {
-            $ret = $user->reg($data['nickname'], $data['password'], $data['email']);
+            $ret = $user->addUser($data['nickname'], $data['password'], $data['email']);
 
             if ($ret) {
                 $this->getResponse()->jsonResponse(['msg' => '注册成功，' .$data['nickname']]);
@@ -87,17 +87,17 @@ class UserController extends \Mphp\BaseController{
     }
 
     /**
-     * 获取用户信息 先从redis中读，若没有则从存储中获取
+     * get userInfo first get it from redis than mysql
      */
     public function getUserInfoAction($id){
         $idx  = 'user_'.$id;
-        $data = array(); //初始化一个data
+        $data = array();
 
-        // 从redis中拉取
+        // get redis
         $redis= $this->di('redis');
         $data = $redis->get($idx);
 
-        //从db中拉取
+        // get db
         if (empty($data)) {
             $user = new UserService();
             $data = $user->getUserById($id);

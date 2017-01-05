@@ -6,12 +6,13 @@
  * Time: 10:50 AM
  */
 namespace Ecc\Topic;
-//error_reporting(E_ALL);
 
 define('SITE_ROOT',  __DIR__);
 define('DEBUG',     true);
+define('TIMESTAMP', time());
 require __DIR__ . '/vendor/autoload.php';
 
+ini_set('date.timezone','Asia/Shanghai');
 
 $app = \Mphp\App::getSingleton();
 $app->setControllerNamespace('\\Ecc\\Topic\\Controller\\');
@@ -40,8 +41,13 @@ if (!defined('IN_CLI')) {
     // monolog
     $di->register('log', function () use($di) {
         $log = new \Mphp\MLogger(SITE_ROOT.'/logs/app.log');
-        $log->setWebProcessor();   // 请求相关信息
-        //$log->setAllowChromeLog(); //将日志输出到chrome控制台
+
+        // header info if no need,you can remove
+        $log->setWebProcessor();
+
+        //log will be output chrome console,need chrome extension
+        //$log->setAllowChromeLog();
+
         return $log;
     });
 }
@@ -61,7 +67,7 @@ $di->register('redis',function() use($di) {
     return $inst;
 });
 
-// 路由
+// routers
 $di->register('router', function () use($di) {
     $base_url     = $di['config']->get('core/base_url');
     $route_style  = $di['config']->get('core/route_style');
@@ -72,7 +78,6 @@ $di->register('router', function () use($di) {
 
     $router->addRoutes(
         [
-            'article/{id}'       => 'IndexController/del',
             'login'              => 'UserController/user',
             'logout'             => 'UserController/logout',   
         ]
@@ -82,10 +87,10 @@ $di->register('router', function () use($di) {
         [
             'api/user/login'     => 'UserController/login',
             'api/user/reg'       => 'UserController/reg',
-        ],
-        [
-            'middleware'  => 'CsrfMiddleware',
         ]
+//        [
+//            'middleware'  => 'CsrfMiddleware',
+//        ]
     );
 
     $router->addRoutes(

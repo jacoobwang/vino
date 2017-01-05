@@ -1,6 +1,10 @@
 <?php
 namespace Mphp;
 
+/**
+ * Class RouteParse
+ * @package Mphp
+ */
 class RouteParse {
     /**
      * @var string
@@ -56,7 +60,10 @@ class RouteParse {
         }
     }
 
-
+    /**
+     * initRule
+     * @param $rule
+     */
     private function initRule($rule) {
         $this->_rule = $rule;
         $this->_rule_format = preg_replace_callback(
@@ -78,10 +85,12 @@ class RouteParse {
             array_values($replaces),
             $this->_rule_format
         );
-//        echo $this->_rule_pattern;
     }
 
-
+    /**
+     * initCM
+     * @param $cm
+     */
     private function initCM($cm) {
         $this->_rule_format = $cm;
         $action_name = 'Index';
@@ -113,10 +122,13 @@ class RouteParse {
 
         $this->_is_valid = class_exists($ctrl_name) &&
             method_exists($ctrl_name, $this->_action_name);
-//        echo ($this->_is_valid ? '1':'0');
     }
 
-
+    /**
+     * match
+     * @param $url
+     * @return bool
+     */
     public function match($url) {
         $is_match = preg_match_all(
             sprintf('`^%s$`i', $this->_rule_pattern),
@@ -127,8 +139,6 @@ class RouteParse {
         if (!$is_match) {
             return false;
         }
-
-//        print_r($matches);
 
         $i = 1;
         foreach ($this->_rule_holders as $k => $v) {
@@ -141,6 +151,7 @@ class RouteParse {
     }
 
     /**
+     * getControllerName
      * @return string
      */
     public function getControllerName() {
@@ -148,6 +159,7 @@ class RouteParse {
     }
 
     /**
+     * getActionName
      * @return string
      */
     public function getActionName() {
@@ -155,6 +167,7 @@ class RouteParse {
     }
 
     /**
+     * getRouteValues
      * @return array
      */
     public function getRouteValues() {
@@ -163,6 +176,7 @@ class RouteParse {
 
 
     /**
+     * isValid
      * @return boolean
      */
     public function isValid() {
@@ -171,6 +185,7 @@ class RouteParse {
 
 
     /**
+     * getActionUrl
      * 根据参数返回URL，如果参数无法匹配路由规则，则返回FALSE
      * @param $params default=null
      * @return bool|string

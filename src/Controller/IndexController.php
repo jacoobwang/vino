@@ -5,6 +5,9 @@ namespace Ecc\Topic\Controller;
 class IndexController extends \Mphp\BaseController{
 
 
+    /**
+     * render index page
+     */
     public function indexAction(){
       	$view = $this->di('twig');
       	echo $view->render('index.html', array(

@@ -87,7 +87,10 @@ class RedisLock {
         $this->_redis = $redis;
     }
 
-
+    /**
+     * @param int $retry
+     * @return bool
+     */
     public function getLock($retry = 3) {
         $redis = $this->_redis;
         $key = $this->key;
@@ -128,7 +131,9 @@ class RedisLock {
         return false;
     }
 
-
+    /**
+     * releaseLock
+     */
     public function releaseLock() {
         if ($this->locked) {
             $redis = $this->_redis;

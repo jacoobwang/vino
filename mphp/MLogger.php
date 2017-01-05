@@ -13,7 +13,11 @@ use Monolog\Handler\RotatingFileHandler;
 use Monolog\Handler\ChromePHPHandler;
 use Monolog\Processor\WebProcessor;
 
-
+/**
+ * Class MLogger
+ * 使用monolog实现
+ * @package Mphp
+ */
 class MLogger implements ILogger {
     /**
      * @var Logger
@@ -31,6 +35,11 @@ class MLogger implements ILogger {
         $this->_logger = $this->createLogger($tag_name, $log_file);
     }
 
+    /**
+     * @param $tag_name
+     * @param $log_file
+     * @return Logger
+     */
     public function createLogger($tag_name, $log_file) {
         $log = new Logger($tag_name);
         if (!empty($log_file)) {
@@ -47,7 +56,10 @@ class MLogger implements ILogger {
         return $this->_logger;
     }
 
-
+    /**
+     * 数组转字符串
+     * @return string
+     */
     public function argToString() {
         $outputs = array();
         foreach (func_get_args() as $v) {
@@ -69,36 +81,60 @@ class MLogger implements ILogger {
         $this->_logger->pushHandler(new ChromePHPHandler());
     }
 
+    /**
+     * 允许日志记录header相关信息
+     */
     public function setWebProcessor() {
         $this->_logger->pushProcessor(new WebProcessor());
     }
 
+    /**
+     * debug
+     */
     public function debug() {
         call_user_func_array(array($this->_logger, 'debug'), func_get_args());
     }
 
+    /**
+     * info
+     */
     public function info() {
         call_user_func_array(array($this->_logger, 'info'), func_get_args());
     }
 
+    /**
+     * warn
+     */
     public function warn() {
         call_user_func_array(array($this->_logger, 'warn'), func_get_args());
     }
 
+    /**
+     * error
+     */
     public function error() {
         call_user_func_array(array($this->_logger, 'err'), func_get_args());
     }
 
+    /**
+     * alert
+     */
     public function alert() {
         call_user_func_array(array($this->_logger, 'alert'), func_get_args());
     }
 
+    /**
+     * emerg
+     */
     public function emerg() {
         call_user_func_array(array($this->_logger, 'emerg'), func_get_args());
     }
 
-
-
+    /**
+     * get
+     * @param $tag_name
+     * @return MLogger
+     */
     public function get($tag_name) {
         return new self($this->_log_file, $tag_name);
     }

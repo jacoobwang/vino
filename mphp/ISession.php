@@ -1,6 +1,10 @@
 <?php
 namespace Mphp;
 
+/**
+ * Interface ISession
+ * @package Mphp
+ */
 interface ISession {
     /**
      * @param $key string

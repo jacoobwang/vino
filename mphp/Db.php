@@ -4,8 +4,22 @@ namespace Mphp;
 
 
 class Db {
+
+    const PARAM_PREFIX = ':fld';
+    private $conn = null;
+    private $fetch_style = \PDO::FETCH_ASSOC;
+    private $_error = array();
+    private $_last_sql = array();
     private static $db_connections = array();
 
+    function __construct($dsn, $user, $password) {
+        try {
+            $this->conn = new \PDO($dsn, $user, $password);
+        } catch (\PDOException $e) {
+            throw new ExceptionHelper('DB error: ' . $e->getMessage(), 500);
+        }
+        $this->setCharset();
+    }
 
     /**
      * @static
@@ -30,27 +44,39 @@ class Db {
         return $conn;
     }
 
-
-    const PARAM_PREFIX = ':fld';
-    private $conn = null;
-    private $fetch_style = \PDO::FETCH_ASSOC;
-    private $_error = array();
-    private $_last_sql = array();
-
-
-    function __construct($dsn, $user, $password) {
-        try {
-            $this->conn = new \PDO($dsn, $user, $password);
-        } catch (\PDOException $e) {
-            throw new ExceptionHelper('DB error: ' . $e->getMessage(), 500);
+    /**
+     * @param string $val
+     * @return string
+     */
+    public static function mysqlQuote($val) {
+        if (strpos($val, '.') !== FALSE) {
+            return $val;
         }
-        $this->setCharset();
+        return "`$val`";
     }
 
+    /**
+     * @param string $str
+     * @return string
+     */
+    public static function escapeSearch($str) {
+        return strtr($str, array('%' => '\%', '_' => '\_', '\\' => '\\\\'));
+    }
+
+    /**
+     * @return array
+     */
     public function getError() {
         return $this->_error;
     }
 
+    /**
+     * throw errors
+     *
+     * @param array $err_info
+     * @param integer $line
+     * @throws \Exception
+     */
     private function dbError($err_info, $line) {
         if (defined('DEBUG') && DEBUG) {
             print_r(debug_backtrace());
@@ -58,18 +84,42 @@ class Db {
         throw ExceptionHelper::create('DB error: ' . var_export($this->_last_sql, true) . '|' . implode('|', $err_info) . ' Line: ' . $line, 936084);
     }
 
+    /**
+     * get last sql
+     *
+     * @return array
+     */
     public function getLastSql() {
         return $this->_last_sql;
     }
 
+    /**
+     * set last sql
+     *
+     * @param string $sql
+     * @param array
+     */
     private function setLastSql($sql, $bind_data = array()) {
         $this->_last_sql = array($sql, $bind_data);
     }
 
+    /**
+     * set chraset
+     *
+     * @param string $charset
+     */
     public function setCharset($charset = 'utf8mb4') {
         $this->execute("SET NAMES '{$charset}';");
     }
 
+    /**
+     * execute sql ddl with insert update delete
+     *
+     * @param QSelect|string $sql
+     * @param array $params
+     * @return integer affected rows
+     * @throws \Exception
+     */
     public function execute($sql, $params = null) {
         if ($sql instanceof QSelect) {
             $sql2 = $sql->toSql();
@@ -77,7 +127,6 @@ class Db {
             $sql = $sql2;
         }
         if ($params == null) {
-            // 不带参数的SQL
             $this->setLastSql($sql);
             $rows = $this->conn->exec($sql);
             if ($rows === false) {
@@ -99,12 +148,21 @@ class Db {
         return $rows;
     }
 
+    /**
+     * execute sql ddl with select
+     *
+     * @param QSelect|string $sql
+     * @param array $params
+     * @return \PDOStatement
+     * @throws \Exception
+     */
     private function _query($sql, $params = null) {
         if ($sql instanceof QSelect) {
             $sql2 = $sql->toSql();
             $params = $sql->getParamList();
             $sql = $sql2;
         }
+
         if ($params == null) {
             $this->setLastSql($sql);
             $cmd = $this->conn->query($sql);
@@ -120,23 +178,19 @@ class Db {
             }
             $cmd->execute($params);
         }
-        // 直接通过错误码判断是否成功，无错误则表示成功
         if ($cmd->errorCode() != '000') {
             $this->dbError($cmd->errorInfo(), __LINE__);
         }
         return $cmd;
     }
 
-    public function fetchVar($sql, $params = null) {
-        if ($sql instanceof QSelect) {
-            $sql->limit(1);
-        }
-        $cmd = $this->_query($sql, $params);
-        $r = $cmd->fetch(\PDO::FETCH_NUM);
-        $cmd->closeCursor();
-        return ($r === false) ? null : $r[0];
-    }
-
+    /**
+     * get one row
+     *
+     * @param QSelect|string $sql
+     * @param null $params
+     * @return mixed|null
+     */
     public function fetchRow($sql, $params = null) {
         if ($sql instanceof QSelect) {
             $sql->limit(1);
@@ -147,6 +201,14 @@ class Db {
         return ($r === false) ? null : $r;
     }
 
+    /**
+     * get column by $col
+     *
+     * @param QSelect|string $sql
+     * @param array|null $params
+     * @param integer $col
+     * @return array|null
+     */
     public function fetchCol($sql, $params = null, $col = 0) {
         $cmd = $this->_query($sql, $params);
         $result = $cmd->fetchAll(\PDO::FETCH_COLUMN, $col);
@@ -154,6 +216,13 @@ class Db {
         return empty($result) ? null : $result;
     }
 
+    /**
+     * get all
+     *
+     * @param $sql
+     * @param array|null $params
+     * @return array|null
+     */
     public function fetchAll($sql, $params = null) {
         $cmd = $this->_query($sql, $params);
         $result = $cmd->fetchAll($this->fetch_style);
@@ -161,21 +230,24 @@ class Db {
         return empty($result) ? null : $result;
     }
 
+    /**
+     * quoted string
+     *
+     * @param string $value
+     * @return string a quoted string
+     */
     public function quote($value) {
         return $this->conn->quote($value);
     }
 
-    public static function mysqlQuote($val) {
-        if (strpos($val, '.') !== FALSE) {
-            return $val;
-        }
-        return "`$val`";
-    }
-
-    public static function escapeSearch($str) {
-        return strtr($str, array('%' => '\%', '_' => '\_', '\\' => '\\\\'));
-    }
-
+    /**
+     * handle where part
+     *
+     * @param string $sql
+     * @param array $params
+     * @param QWhere $where
+     * @return string
+     */
     public function applyCondition($sql, &$params, $where) {
         if ($where instanceof QWhere) {
             $where = $where->toSqlArray();
@@ -195,10 +267,11 @@ class Db {
 
 
     /**
-     * 插入数据，允许多值
-     * @param $table
-     * @param $data array('uid'=>1, 'name'=>'dayu') | array(array('uid'=>1, 'name'=>'dayu'), array('uid'=>2, 'name'=>'yugw'))
-     * @return int 返回写入记录数量
+     * insert
+     *
+     * @param string $table
+     * @param array $data array('uid'=>1, 'name'=>'red') | array(array('uid'=>1, 'name'=>'red'), array('uid'=>2, 'name'=>'black'))
+     * @return integer affect rows
      */
     public function insert($table, $data) {
         $table = self::mysqlQuote($table);
@@ -228,26 +301,18 @@ class Db {
         }
 
         $sql = "INSERT INTO {$table} (`" . implode('`, `', $fields) . '`) VALUES (' . implode('), (', $placeholders) . ')';
-        //		$this->set_last_sql( $sql, $values );
-        //		$cmd = $this->conn->prepare($sql);
-        //		foreach($values as $name=>$value)
-        //		{
-        //			$cmd->bindValue($name,$value);
-        //		}
-        //		$ret = $cmd->execute();
         $ret = $this->execute($sql, $values);
         return $ret;
     }
 
     /**
-     * $where 可以是字符串，或者类似的数组
-     * array('id>:id and cid = :cid', ':id'=>5, ':cid'=> 10)
-     * 数组的第一个元素是带参数SQL语句，之后的键值配对元素是需要绑定的参数
-     * @param $table
-     * @param $data
-     * @param $where
-     * @param int $limit
-     * @return int 受影响的记录数
+     * update
+     *
+     * @param string $table array('id>:id and cid = :cid', ':id'=>5, ':cid'=> 10)
+     * @param array $data
+     * @param QWhere|string $where
+     * @param integer $limit
+     * @return integer
      */
     public function update($table, $data, $where = null, $limit = 0) {
         $table = self::mysqlQuote($table);
@@ -277,6 +342,14 @@ class Db {
         return $ret;
     }
 
+    /**
+     * delete
+     *
+     * @param string $table
+     * @param QWhere|string $where
+     * @param integer $limit
+     * @return integer
+     */
     public function delete($table, $where, $limit = 0) {
         $table = self::mysqlQuote($table);
         $sql = "DELETE FROM {$table} ";
@@ -289,18 +362,38 @@ class Db {
         return $ret;
     }
 
+    /**
+     * The end of insert id or serizline value
+     *
+     * @return string
+     */
     public function getInsertId() {
         return $this->conn->lastInsertId();
     }
 
+    /**
+     * begin transaction
+     *
+     * @return boolean
+     */
     public function beginTran() {
         return $this->conn->beginTransaction();
     }
 
+    /**
+     * transaction commit
+     *
+     * @return boolean
+     */
     public function commit() {
         return $this->conn->commit();
     }
 
+    /**
+     * transaction rollback
+     *
+     * @return boolean
+     */
     public function rollback() {
         return $this->conn->rollBack();
     }
