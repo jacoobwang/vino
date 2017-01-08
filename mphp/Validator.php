@@ -144,9 +144,9 @@ class Validator
     /**
      * 循环校验$this->_rules,某一个field校验失败后,纪录msg,更新$this->_result,然后校验下一个field
      * @param $data (Input数据)
-     * @return bool ($this->_result)
+     * @return boolean ($this->_result)
      */
-    public function check() {
+    private function check() {
         foreach ($this->_rules as $field=>$rules) {
             foreach($rules as $rule) {
                 $func = $rule['rule'];
@@ -166,6 +166,10 @@ class Validator
         return $this->_result;
     }
 
+    /**
+     * if fails
+     * @return boolean 
+    **/ 
     public function fails() {
         return $this->check() === false;
     }

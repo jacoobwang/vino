@@ -6,7 +6,7 @@
  * Time: 10:50 AM
  */
 
- return array(
+ return array( 
      'base_url' => '/mphp/',
      'route_style'  => 'custom'   //custom 完全自定义  | normal Controller/Action+自定义 ;
  );
