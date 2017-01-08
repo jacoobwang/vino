@@ -20,8 +20,7 @@ $().ready(function() {
         submitHandler:function(){
             var data = {
                 user : $("input[name=username]").val(),
-                pwd  : $("input[name=password]").val(),
-                csrf : $("input[name=__csrfToken]").val(),
+                pwd  : $("input[name=password]").val()
             };
 
             $.ajax(
@@ -36,7 +35,15 @@ $().ready(function() {
                             localStorage.nickname = res.body.nickname;
                             location.href="/mphp/userInfo";
                         } else {
-                            alert(res.error);
+                            if(typeof res.error == "string") {
+                                alert(res.error);
+                            } else {
+                                var info = 'Error:';
+                                for(i in res.error){
+                                    info += res.error.i+";";
+                                }
+                                alert(info);
+                            }
                         }
                     }
                 }
@@ -76,8 +83,7 @@ $().ready(function() {
             var data = {
                 user : $("input[name=reg_username]").val(),
                 pwd  : $("input[name=reg_password]").val(),
-                csrf : $("input[name=__csrfToken]").val(),
-                email: $("input[name=reg_email]").val(),
+                email: $("input[name=reg_email]").val()
             };
             $.ajax(
                 {
@@ -90,8 +96,15 @@ $().ready(function() {
                         if(res.errno == 0) {
                             alert(res.body.msg);
                         } else {
-                            alert(res.error);
-                            location.reload();
+                            if(typeof res.error == "string") {
+                                alert(res.error);
+                            } else {
+                                var info = 'Error:';
+                                for(i in res.error){
+                                    info += res.error[i]+";";
+                                }
+                                alert(info);
+                            }
                         }
                     }
                 }

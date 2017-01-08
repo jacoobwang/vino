@@ -33,7 +33,8 @@ if (!defined('IN_CLI')) {
         $cfg = $di['config'];
         $loader =  new \Twig_Loader_Filesystem(SITE_ROOT . '/' . $cfg->get('twig/tpl_dir'));
         $twig    =  new \Twig_Environment($loader, array(
-            'cache' => $cfg->get('twig/compile_dir'),
+            'cache' => $cfg->get('twig/compile_dir'), //缓存目录
+            'auto_reload' => true     //代码改变，重新编译
         ));
         return $twig;
     });
@@ -88,9 +89,6 @@ $di->register('router', function () use($di) {
             'api/user/login'     => 'UserController/login',
             'api/user/reg'       => 'UserController/reg',
         ]
-//        [
-//            'middleware'  => 'CsrfMiddleware',
-//        ]
     );
 
     $router->addRoutes(

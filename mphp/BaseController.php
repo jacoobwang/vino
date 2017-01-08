@@ -63,6 +63,13 @@ class BaseController {
     }
 
     /**
+     * @return Validator
+     */
+    public function getValidator() {
+        return Validator::create();
+    }
+
+    /**
      * @return string token
      */
     public function csrfToken() {

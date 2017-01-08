@@ -69,7 +69,7 @@ class Response {
         if ($code === 0) {
             $ret['body'] = $content;
         } else {
-            $ret['error'] = strval($content);
+            $ret['error'] = $content;
         }
 
         return $ret;

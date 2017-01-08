@@ -12,10 +12,10 @@ namespace Mphp;
  * Class BaseFormValidate
  * @package Mphp
  */
-class BaseFormValidate
+class Validator
 {
     //预定义规则 添加新的预定义规则只需要把规则名添加到$_preRules,然后定义baseRule方法
-    private $_preRules = ['require',
+    private $_preRules = ['required',
                           'minLen','maxLen','betweenLen',
                           'min','max','between',
                           'email','mobile',
@@ -29,46 +29,29 @@ class BaseFormValidate
     //待校验的数据
     private $_data = [];
 
+    public static function create(){
+        return new self();
+    }
 
-    /**
-     * 填充验证规则
-     * [
-     *   'name'=> [
-     *              ['key'=>'name','rule'=>'baseRequire','msg'=>'xxx],
-     *              ['key'=>'name','rule'=>'baseMinLen','msg'=>'yyy','ops'=>6],
-     *              ['key'=>'name','rule'=>'MaxLen','msg'=>'zzz','ops'=>8], //自定义规则不加前缀
-     *              ['key'=>'name','rule'=>'baseBetweenLen','msg'=>'zzz','ops'=>[6,8]],
-     *            ],
-     *  'email'=> [
-     *              ['key=>'email','rule'=>'baseRequire','msg'=>'www],
-     *              ['key=>'email','rule'=>'baseEmail', 'msg'=>'vvv'],
-     *              ['key=>'email','rule'=>'baseReg', 'msg'=>'uuu','ops'=>'/pattern/iu',
-     *            ],
-     * ]
-     * Base类预定义的rule以'base'打头, 用户自定义的rule以自定义为准,如MaxLen
-     * 当rule为正则pattern(被//包含), check时使用preg_match匹配
-     * @param $key
-     * @param $rule
-     * @param $msg
-     * @param array $ops
-     * @return void
-     */
-    public function addRule($key, $rule, $msg, $ops=[]) {
-        if(!isset($this->_rules[$key])) {
-            $this->_rules[$key] = [];
+    public function make($data, $rules){
+        $this->_data = $data;
+        foreach ($rules as $key => $rule) {
+            if(!isset($this->_rules[$key])) {
+                $this->_rules[$key] = [];
+            }
+            if($pos = strpos($rule[0], '|') !== false){
+                $ops  = explode('|', $rule[0]);
+                $_rule = array_shift($ops);
+            }else{
+                $_rule = $rule[0];
+            }
+            if(in_array($_rule,$this->_preRules)) {
+                $prefix = 'base';
+            }
+            $this->_rules[$key][] = ['key'=>$key, 'rule'=>$prefix.ucfirst($_rule), 'msg'=>$rule[1], 'ops'=>$ops];
+            $ops = null;
         }
-        if(in_array($rule,$this->_preRules)) {
-            $prefix = 'base';
-        } else {
-            $prefix = '';
-        }
-        $argNum = func_num_args();
-        if($argNum==4) {
-            $ops = func_get_arg(3);
-            $this->_rules[$key][] = ['key'=>$key, 'rule'=>$prefix.ucfirst($rule), 'msg'=>$msg, 'ops'=>$ops];
-        } else {
-            $this->_rules[$key][] = ['key'=>$key, 'rule'=>$prefix.$rule, 'msg'=>$msg];
-        }
+        return $this;
     }
 
     /**
@@ -76,13 +59,24 @@ class BaseFormValidate
      * @param $field
      * @return boolean
      */
-    protected function baseRequire($field) {
-        if(is_string($this->_data[$field]) && strlen($this->_data[$field])>0) {
-            $result = true;
-        } elseif(is_array($this->_data[$field]) && !empty($this->_data[$field])) {
-            $result = true;
+    protected function baseRequired($field, $ops) {
+        if (empty($ops)) {
+            if(is_string($this->_data[$field]) && strlen($this->_data[$field])>0) {
+                $result = true;
+            } elseif(is_array($this->_data[$field]) && !empty($this->_data[$field])) {
+                $result = true;
+            } else {
+                $result = false;
+            }
         } else {
-            $result = false;
+            foreach ($ops as $value) {
+                if($pos = strpos($value, ':')){
+                    $rule = substr($value, 0, $pos);
+                    $r_limit = substr($value, $pos+1);
+                    $func = 'base'.ucfirst($rule);
+                    $result = $this->$func($field, $r_limit);
+                }
+            }
         }
         return $result;
     }
@@ -93,7 +87,7 @@ class BaseFormValidate
      * @param $ops
      * @return boolean
      */
-    protected function baseMinLen($field, $ops) {
+    protected function baseMin($field, $ops) {
         $len = $ops;
         return mb_strlen($this->_data[$field]) >= $len;
     }
@@ -104,7 +98,7 @@ class BaseFormValidate
      * @param $ops
      * @return boolean
      */
-    protected function baseMaxLen($field, $ops) {
+    protected function baseMax($field, $ops) {
         $len = $ops;
         return mb_strlen($this->_data[$field]) <= $len;
     }
@@ -120,16 +114,6 @@ class BaseFormValidate
         $maxLen = $ops[1];
         $len = mb_strlen($this->_data[$field]);
         return $len>=$minLen && $len<=$maxLen;
-    }
-
-    protected function baseMin($field, $ops) {
-        $min = $ops;
-        return is_numeric($this->_data[$field]) && $this->_data[$field]>=$min;
-    }
-
-    protected function baseMax($field, $ops) {
-        $max = $ops;
-        return is_numeric($this->_data[$field]) && $this->_data[$field]<=$max;
     }
 
     protected function baseBetween($field, $ops) {
@@ -162,22 +146,15 @@ class BaseFormValidate
      * @param $data (Input数据)
      * @return bool ($this->_result)
      */
-    public function check($data) {
-        $this->_data = $data;
+    public function check() {
         foreach ($this->_rules as $field=>$rules) {
             foreach($rules as $rule) {
                 $func = $rule['rule'];
                 $msg = $rule['msg'];
-                if(!isset($this->_data[$field])) {
-                    $checkResult = false;
-                    $msg = "$field not found";
-                } else {
-                    if(isset($rule['ops'])) {
-                        $checkResult = $this->$func($field, $rule['ops']);
-                    } else {
-                        $checkResult = $this->$func($field);
-                    }
-                }
+                $ops = $rule['ops'];             
+            
+                $checkResult = $this->$func($field,$ops);
+        
                 $this->_result = $this->_result && $checkResult;
                 if(!$checkResult) {
                     $this->_msg[$field] = $msg;
@@ -187,6 +164,10 @@ class BaseFormValidate
         }
 
         return $this->_result;
+    }
+
+    public function fails() {
+        return $this->check() === false;
     }
 
     /**
@@ -205,20 +186,6 @@ class BaseFormValidate
         } else {
             return $this->_msg;
         }
-    }
-
-    /**
-     * @return array
-     */
-    public function getPreRules() {
-        return $this->_preRules;
-    }
-
-    /**
-     * @return array
-     */
-    public function getRules() {
-        return $this->_rules;
     }
 
 }

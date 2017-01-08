@@ -62,10 +62,6 @@ class __TwigTemplate_6cd17c77dbc3a203b384ec950c5d290074656adb40dc9fbeb7caabde9bc
             <div class=\"col-sm-9 col-md-9\">
                 <div class=\"form-group\">
                     <i class=\"fa fa-user fa-lg\"></i>
-                    <input type=\"hidden\" name=\"__csrfToken\" value=\"";
-        // line 44
-        echo twig_escape_filter($this->env, (isset($context["csrfToken"]) ? $context["csrfToken"] : null), "html", null, true);
-        echo "\">
                     <input class=\"form-control required\" type=\"text\" placeholder=\"Username\" name=\"username\" autofocus=\"autofocus\" maxlength=\"20\"/>
                 </div>
                 <div class=\"form-group\">
@@ -115,7 +111,7 @@ class __TwigTemplate_6cd17c77dbc3a203b384ec950c5d290074656adb40dc9fbeb7caabde9bc
     </div>
 </div>
 <script type=\"text/javascript\" src=\"";
-        // line 93
+        // line 92
         echo twig_escape_filter($this->env, (isset($context["JS_CSS_DOMAIN"]) ? $context["JS_CSS_DOMAIN"] : null), "html", null, true);
         echo "/js/reg.js\" ></script>
 </body>
@@ -135,7 +131,7 @@ class __TwigTemplate_6cd17c77dbc3a203b384ec950c5d290074656adb40dc9fbeb7caabde9bc
 
     public function getDebugInfo()
     {
-        return array (  119 => 93,  67 => 44,  32 => 12,  19 => 1,);
+        return array (  115 => 92,  32 => 12,  19 => 1,);
     }
 
     /** @deprecated since 1.27 (to be removed in 2.0). Use getSourceContext() instead */

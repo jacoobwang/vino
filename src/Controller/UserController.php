@@ -12,8 +12,7 @@ class UserController extends \Mphp\BaseController{
     public function userAction(){
         $view = $this->di('twig');
         echo $view->render('register.html', array(
-            'JS_CSS_DOMAIN' => BASE_URL.'templates',
-            'csrfToken'     => $this->csrfToken()
+            'JS_CSS_DOMAIN' => BASE_URL.'templates'
         ));
     }
 
@@ -35,8 +34,20 @@ class UserController extends \Mphp\BaseController{
     public function loginAction(){
         $data = [
             'nickname' => $this->getRequest()->post('user'),
-            'password' => $this->getRequest()->post('post')
+            'password' => $this->getRequest()->post('pwd')
         ];
+
+        // vaildate post data 
+        $validator = $this->getValidator()->make($data, [
+            'nickname' => ['required|min:4','用户名字数不能少于4'],
+            'password' => ['required|min:6','密码最小长度为6位']
+        ]);
+
+        // if fail return errors to response
+        if($validator->fails()) {
+            $this->getResponse()->jsonResponse($validator->message(),2);
+            exit;
+        }
 
         $user = new UserService();
         $ret = $user->findUser($data['nickname'], $data['password']);
@@ -70,8 +81,20 @@ class UserController extends \Mphp\BaseController{
             'email'    => $this->getRequest()->post('email')
         ];
 
-        $user = new UserService();
+        // vaildate post data 
+        $validator = $this->getValidator()->make($data, [
+            'nickname' => ['required|min:4','用户名字数不能少于4'],
+            'password' => ['required|min:6','密码最小长度为6位'],
+            'email'    => ['email','请填写正确的邮箱格式']
+        ]);
 
+        // if fail return errors to response
+        if($validator->fails()) {
+            $this->getResponse()->jsonResponse($validator->message(),2);
+            exit;
+        }
+
+        $user = new UserService();
         if($user->validateUsername($data['nickname'])) {
             //nickname exists
             $this->getResponse()->jsonResponse('该用户名已被占用，请换用其他用户名', 1);
