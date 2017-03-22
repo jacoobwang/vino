@@ -9,6 +9,7 @@
  "require": {
      "monolog/monolog": "1.10.0",
      "twig/twig": "1.30.0",
-     "filp/whoops": "^2.1"
+     "filp/whoops": "^2.1",
+     "phpFastCache/phpFastCache": "^5.0"
  }	  
 }

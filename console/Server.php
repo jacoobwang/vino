@@ -2,7 +2,8 @@
 namespace console;
 
 /**
- * Undocumented class
+ * Server library is to supply server container
+ * you can run php vino-cli server
  */
 class Server extends ConsoleHelper {
 

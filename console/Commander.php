@@ -102,7 +102,8 @@ class Commander extends ConsoleHelper {
     protected function getCommandDescriptions()
     {
         $descriptions = [
-            'server' => 'Allows you to run php server'
+            'composer' => 'Allows you manage composer here',
+            'server'   => 'Allows you to run php server',
         ];    
 
         return $descriptions;
