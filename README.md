@@ -4,7 +4,7 @@ Vino is a PHP framework that helps you quick build web applications and APIs.
 
 ## Installation
 
-1,Now you can download from this github respository,use git clone https://github.com/jacoobwang/vino.git or click button download zip.ether is ok.
+1,Now you can download from this github respository,use git clone https://github.com/jacoobwang/vino.git or click button download zip.either is ok.
 
 2,When you finished download,you should use composer install some php packages that you can find it in the file ---- composer.json.
 
@@ -34,7 +34,7 @@ and i also support examples like login and reg function in the UserCrontoller.
 
 You can visit this website to learn more
 
-https://jacoobwang.github.io
+https://jacoobwang.github.io/vino/vino.html
 
 ## Ends
 
