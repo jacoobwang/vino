@@ -6,15 +6,47 @@ Vino is a PHP framework that helps you quick build web applications and APIs.
 
 1,Now you can download from this github respository,use git clone https://github.com/jacoobwang/vino.git or click button download zip.either is ok.
 
-2,When you finished download,you should use composer install some php packages that you can find it in the file ---- composer.json.
+2,When you finished download,you should cd your download folder,and run commander 
 
-Use this cmd:
-
-```php
-php composer.phar install 
+```shell
+php vino-cli
 ```
 
-3,When you installed packages,if you web container is nginx ,you sholud modify nginx.conf.
+you will see :
+
+![screenshot](./screenshot.png)
+
+4,Install dependency by vino-cli
+
+run 
+
+```shell
+php vino-cli compser install
+```
+
+5,Run php built-in web server
+
+run
+
+```shell
+php vino-cli server
+```
+
+than a php server maked ,you can visit in your browser!!
+
+you will see:
+
+![homepage](./homepage.png)
+
+ So ,congratulations，it's worked!!!
+
+6, Try write some code & enjoy your fun   
+
+---------------------------------
+
+Tips:
+
+> if you run in nginx server,you should modify your nginx.conf and add :
 
 ```json
 location / {
@@ -22,13 +54,7 @@ location / {
 }
 ```
 
-If you use apache ,just open rewrite module is ok.Vino user .htaccess file.
-
-4,At last, you should open your browser visit http://localhost/
-
-So ,congratulations，it's worked!
-
-and i also support examples like login and reg function in the UserCrontoller.
+> If you run in apache server ,just open rewrite module.Vino user .htaccess file.
 
 ## Documentation
 
@@ -38,7 +64,7 @@ https://jacoobwang.github.io/vino/vino.html
 
 ## Ends
 
-If you have some ideas,welcome contact me ! 
+If you have some ideas,welcome contact me by mail 531532957@qq.com ! 
 
 Thank you very much!
 
