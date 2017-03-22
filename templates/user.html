@@ -1,16 +1,12 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>Welcome Mphp</title>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta http-equiv="Pragma" content="no-cache">
-    <link rel="stylesheet" type="text/css" href="{{JS_CSS_DOMAIN}}/css/style.css">
-</head>
-<body>
-<div class="container">
-	<img src="{{JS_CSS_DOMAIN}}/img/mphp-logo.png">
-	<h3 class="title">Welcome {{username}}, <span class="red" id="user"></span> this is your page <br><a id="js_logout" href="/mphp/logout">Login out</a></h3>
-</div>
-</body>
-</html>
+{% extends "main.html" %}
+
+{% block title %} Test {% endblock %}
+
+{% block content %}
+  
+  <div class="site-error">
+    <p style="font-size: 25px;"><span style="font-size: 100px; margin-right: 40px; margin-left: 20px;">;(</span>{{ msg|raw }}</p>
+    <p></p>
+  </div>
+  
+{% endblock %}

@@ -7,25 +7,26 @@
  */
 namespace Ecc\Topic;
 
-define('SITE_ROOT',  __DIR__);
-define('DEBUG',     true);
-define('TIMESTAMP', time());
+defined('SITE_ROOT') or define('SITE_ROOT',  __DIR__);
+defined('TIMESTAMP') or define('TIMESTAMP', time());
+defined('Vino_DEBUG') or define('Vino_DEBUG', true);
+
 require __DIR__ . '/vendor/autoload.php';
 
 ini_set('date.timezone','Asia/Shanghai');
 
-$app = \Mphp\App::getSingleton();
+$app = \Vino\App::getSingleton();
 $app->setControllerNamespace('\\Ecc\\Topic\\Controller\\');
 $di = $app->di();
 
 $di->register('config', function () {
-    return new \Mphp\Config(SITE_ROOT.'/configs');
+    return new \Vino\Config(SITE_ROOT.'/configs');
 });
 
 if (!defined('IN_CLI')) {
     // session
     $di->register('session', function() {
-        return new \Mphp\Session();
+        return new \Vino\Session();
     });
 
     // twig
@@ -41,63 +42,29 @@ if (!defined('IN_CLI')) {
 
     // monolog
     $di->register('log', function () use($di) {
-        $log = new \Mphp\MLogger(SITE_ROOT.'/logs/app.log');
+        $log = new \Vino\MLogger(SITE_ROOT.'/logs/app.log');
 
         // header info if no need,you can remove
         $log->setWebProcessor();
-
-        //log will be output chrome console,need chrome extension
-        //$log->setAllowChromeLog();
-
         return $log;
     });
 }
-
-
-// redis 如果本地没有安装redis，请注释掉本段代码
-$di->register('redis',function() use($di) {
-    $cfg = $di['config']->get('redis');
-    $inst = new \Redis();
-    $host= $cfg['default']['host'];
-    $port= $cfg['default']['port'];
-    $auth= $cfg['default']['auth'];
-    if (!empty($cfg['auth'])) {
-        $inst->auth($auth);
-    }
-    $inst->connect($host, $port);
-    return $inst;
-});
 
 // routers
 $di->register('router', function () use($di) {
     $base_url     = $di['config']->get('core/base_url');
     $route_style  = $di['config']->get('core/route_style');
 
-    define('BASE_URL', $base_url);
+    defined('BASE_URL') or define('BASE_URL', $base_url);
 
-    $router = new \Mphp\Router($base_url,$route_style);
-
-    $router->addRoutes(
-        [
-            'login'              => 'UserController/user',
-            'logout'             => 'UserController/logout',   
-        ]
-    );
+    $router = new \Vino\Router($base_url,$route_style);
 
     $router->addRoutes(
         [
-            'api/user/login'     => 'UserController/login',
-            'api/user/reg'       => 'UserController/reg',
-        ]
-    );
-
-    $router->addRoutes(
-        [
-            'api/user/{id}'      => 'UserController/getUserInfo',
-            'userInfo'           => 'UserController/userCenter'
-        ],
-        [
-            'middleware'  => 'AuthMiddleware',
+            'userInfo'           => 'UserController/userCenter',
+            'adminHome'          => 'UserController/homeCenter', 
+            'adminLab'           => 'UserController/labCenter',  
+            'adminAll'           => 'UserController/allCenter',    
         ]
     );
 
@@ -106,7 +73,14 @@ $di->register('router', function () use($di) {
 
 // db 
 $di->register('db', function () {
-    return \Mphp\Db::getConnection();
+    return \Vino\Db::getConnection();
 });
+
+// 错误捕获
+if(Vino_DEBUG){
+    $whoops = new \Whoops\Run;
+    $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+    $whoops->register();
+}
 
 $app->run($di);

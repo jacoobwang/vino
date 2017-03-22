@@ -1,0 +1,9 @@
+{% import 'macro.html' as macor %}
+
+<dl>  
+    <dt>Username</dt>  
+    <dd>{{ macor.input('username') }}</dd>  
+    <dt>Password</dt>  
+    <dd>{{ macor.input('password', null, 'password') }}</dd>  
+</dl>  
+<p>{{ macor.textarea('comment') }}</p>  

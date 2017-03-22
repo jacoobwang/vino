@@ -7,6 +7,6 @@
  */
 
  return array( 
-     'base_url' => '/mphp/',
+     'base_url' => '',
      'route_style'  => 'custom'   //custom 完全自定义  | normal Controller/Action+自定义 ;
  );
