@@ -5,9 +5,9 @@ namespace Vino;
 use phpFastCache\CacheManager;
 
 /**
- * redis cache 
+ * cache 
 **/ 
-class Cache implements ICache{
+class Cache {
 
   private $_instance;
 
