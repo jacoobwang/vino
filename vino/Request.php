@@ -147,8 +147,9 @@ class Request {
      * @param null $default
      * @return array|null
      */
-    public function post($key, $default = null) 
+    public function post($key = null, $default = null) 
     {
+        if (is_null($key)) return $_POST;
         return $this->_getValue($_POST, $key, $default);
     }
 }
